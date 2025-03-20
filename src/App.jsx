@@ -9,6 +9,8 @@ function App() {
   const [count, setCount] = useState(0);
   const [todos, setTodos] = useState([]);
   const [inputTodo, setInputTodo] = useState("");
+  const [editId, setEditId] = useState();
+  const [tempInput, setTempInput] = useState("");
 
   const getTodos = async() => {
     const query = await getDocs(collection(db, "todo"));
@@ -38,10 +40,36 @@ function App() {
     }
   }
 
-  async function updateTodo() {
-    
-    // await updateDoc(docRef, {content:"수정할내용"})
+  async function editTodo(targetId,content) {
+    setEditId(targetId);
+    setTempInput(content);
+   }
+  
+
+  function changeEdit(e){
+    setTempInput(e.target.value);
   }
+
+  async function editDone(targetId){
+    console.log("완료클릭시",222);
+    const docRef = doc(db, "todo",targetId);
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+      await updateDoc(docRef, { content: tempInput});
+      console.log("tempINput", tempInput);
+
+      const updatedTodos = todos.map((todo) =>todo.id ===targetId?
+      {...todo, content: tempInput} : todo );
+        setTodos(updatedTodos);
+      } else {
+        alert("존재하지않는 할일입니다.");
+    }
+
+    setEditId();
+    
+  }
+  
 
   async function deleteTodo(targetTodo) {
     console.log(targetTodo);
@@ -67,10 +95,28 @@ function App() {
         {
           todos && todos.length > 0 && todos.map((todo) => (
             <div>
-              <p key={todo.id}>{todo.content}</p>
+              <div key={todo.id}></div>
 
-              <button>수정</button>
-              <button onClick={() => deleteTodo(todo)}>삭제</button>
+      {/* 수정중 일때 -> input으로 전환 */}
+            {editId === todo.id?
+              <>
+                <input
+                  type='text'
+                  onChange={changeEdit}
+                  value={tempInput}
+                  />
+                  <button onClick={() => editDone(todo.id)}>완료</button>
+              </>
+                : 
+              <>
+                <div>{todo.content}</div> 
+                <button onClick={() => editTodo(todo.id, todo.content)}>수정</button>
+                <button onClick={() => deleteTodo(todo)}>삭제</button>
+              </>
+            }
+              
+             
+              
             </div>
           ))
         }
