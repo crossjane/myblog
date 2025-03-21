@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import db from './firebase';
@@ -22,9 +22,22 @@ function Board (){
 
     }
 
+    // function deleteBoards(checkedId){
+    //     const docRef = doc(db, "todo", checkedId);
+    //     const docSnap = await getDoc(docRef);
+    //     if(docSnap.exists()){
+    //         await deleteDoc(docRef);
+    //         const filteredBoards = boards.filter((board) => board.id !== checkedId );
+    //     }
+
+    // }
 
     function gotoWrite(){
        navigate("/write");
+    }
+
+    function gotoDetail(id){
+        navigate(`/boards/${id}`);
     }
 
     useEffect(() => {
@@ -37,7 +50,7 @@ function Board (){
         <header>
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
-          <button>삭제</button>
+          <button onClick={deleteBoards}>삭제</button>
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
         </header>
@@ -47,7 +60,7 @@ function Board (){
               <th>선택</th>
               <th>id</th>
               <th>제목</th>
-              <th>내용용</th>
+              <th>등록일</th>
             </tr>
           </thead>
           <tbody>
@@ -57,12 +70,13 @@ function Board (){
                 <td>
                 <input 
                 type='checkbox'
+
             
                 />
                 </td>
-                <td>{board.id}</td>
-                <td>{board.title}</td>
-                <td>{board.content}</td>
+                <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
+                <td onClick={() => gotoDetail(board.id)}>{board.title}</td>
+                <td onClick={() => gotoDetail(board.id)}>{board.creatAt}</td>
             </tr>
           ))
 
