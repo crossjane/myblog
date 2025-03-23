@@ -70,6 +70,7 @@ function Board (){
                 <td>
                 <input 
                 type='checkbox'
+                // 
 
             
                 />
