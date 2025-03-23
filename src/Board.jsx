@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import db from './firebase';
 
+
 function Board (){
 
     let navigate = useNavigate();
 
     const [boards, setBoards] = useState([]);
+    const [checkList , setCheckList] = useState([]);
 
     async function loadBoards(){
         const query = await getDocs(collection(db, "board"));
@@ -15,7 +17,7 @@ function Board (){
         query.forEach((doc) =>{
             const id = doc.id;
             const data = doc.data();
-            const board = {id, ...data};
+            const board = {id, ...data, isChecked: false};
             newBoards.push(board);
         });
         setBoards(newBoards);
@@ -31,6 +33,14 @@ function Board (){
     //     }
 
     // }
+
+    async function clickCheckBox(id, checked){
+        const clickBoards = boards.map((board)=>board.id === id?
+             {...board, isChecked: checked} : board
+        );
+        setBoards(clickBoards);
+
+    }
 
     function gotoWrite(){
        navigate("/write");
@@ -50,7 +60,7 @@ function Board (){
         <header>
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
-          <button onClick={deleteBoards}>삭제</button>
+          {/* <button onClick={deleteBoards}>삭제</button> */}
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
         </header>
@@ -66,13 +76,12 @@ function Board (){
           <tbody>
           
           {boards.map((board)=>(
-            <tr>
+            <tr key ={board.id}>
                 <td>
                 <input 
                 type='checkbox'
-                // 
-
-            
+                checked={board.isChecked}
+                onChange={() => clickCheckBox(board.id)}
                 />
                 </td>
                 <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
