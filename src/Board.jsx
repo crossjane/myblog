@@ -1,4 +1,4 @@
-import { collection, deleteDoc, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, getDoc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import db from './firebase';
@@ -24,15 +24,15 @@ function Board (){
 
     }
 
-    // function deleteBoards(checkedId){
-    //     const docRef = doc(db, "todo", checkedId);
-    //     const docSnap = await getDoc(docRef);
-    //     if(docSnap.exists()){
-    //         await deleteDoc(docRef);
-    //         const filteredBoards = boards.filter((board) => board.id !== checkedId );
-    //     }
+    async function deleteBoards(checkedId){
+        const docRef = doc(db, "todo", checkedId);
+        const docSnap = await getDoc(docRef);
+        if(docSnap.exists()){
+            await deleteDoc(docRef);
+            const filteredBoards = boards.filter((board) => board.id !== checkedId );
+        }
 
-    // }
+    }
 
     async function clickCheckBox(id, checked){
         const clickBoards = boards.map((board)=>board.id === id?
