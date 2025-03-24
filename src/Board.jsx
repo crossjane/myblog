@@ -24,13 +24,10 @@ function Board (){
 
     }
 
-    async function deleteBoards(checkedId){
-        const docRef = doc(db, "todo", checkedId);
-        const docSnap = await getDoc(docRef);
-        if(docSnap.exists()){
-            await deleteDoc(docRef);
-            const filteredBoards = boards.filter((board) => board.id !== checkedId );
-        }
+    function deleteBoards(){
+        
+        const filteredBoard = boards.filter((board)=>board.isChecked === true);
+        setBoards(filteredBoard);
 
     }
 
@@ -60,7 +57,7 @@ function Board (){
         <header>
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
-          {/* <button onClick={deleteBoards}>삭제</button> */}
+          <button onClick={deleteBoards}>삭제</button>
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
         </header>
