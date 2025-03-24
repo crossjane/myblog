@@ -1,4 +1,4 @@
-import { collection, deleteDoc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import db from './firebase';
@@ -25,9 +25,16 @@ function Board (){
     }
 
     async function deleteBoards(){
-        
-        const filteredBoard = boards.filter((board)=>board.isChecked !== true);
-        setBoards(filteredBoard);
+        const docRef = doc(db, "board");
+        const docSnap = await getDoc(docRef);
+        if(docSnap.exists()){
+            await deleteDoc(docRef);
+            const filteredBoard = boards.filter((board)=>board.isChecked !== true);
+            setBoards(filteredBoard);
+        }else {
+            alert("존재하지 않는 목록입니다.")
+        }
+       
 
     }
 
