@@ -24,9 +24,9 @@ function Board (){
 
     }
 
-    function deleteBoards(){
+    async function deleteBoards(){
         
-        const filteredBoard = boards.filter((board)=>board.isChecked === true);
+        const filteredBoard = boards.filter((board)=>board.isChecked !== true);
         setBoards(filteredBoard);
 
     }
