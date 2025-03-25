@@ -11,6 +11,8 @@ function BoardDetail(){
     const navigate = useNavigate();
 
     const [board, setBoard] = useState();
+    const [tempContent, setTempContent] = useState("");
+    const [isEdit, setIsEdit] = useState(false);
 
     const {id} = useParams();
 
@@ -28,6 +30,17 @@ function BoardDetail(){
 
     }
 
+    function changeEditContent(e){
+        setTempContent(e.target.value);
+    }
+    
+
+
+    function editContent(){
+        // 수정 버튼 눌렀을때. => input으로 변하기 . tempContents상태 
+        setIsEdit(true);
+        setTempContent(board.content);
+    }
 
     function editSave(){
 
@@ -58,7 +71,21 @@ function BoardDetail(){
 
 
 <div className ='btns'>
-    <button onClick={editSave}>수정</button>
+    {isEdit?
+    <>
+    <input
+        type='text'
+        value={board.content}
+        onChange={changeEditContent}
+
+        />
+
+       <button onClick={editContent}>수정</button> 
+    </>
+    :  <button onClick={editSave}>완료</button> 
+
+
+    }
     <button onClick={()=>navigate("/boards")}>목록으로 가기</button>
 </div>
 

@@ -9,7 +9,6 @@ function Board (){
     let navigate = useNavigate();
 
     const [boards, setBoards] = useState([]);
-    const [checkList , setCheckList] = useState([]);
 
     async function loadBoards(){
         const query = await getDocs(collection(db, "board"));
@@ -24,19 +23,11 @@ function Board (){
 
     }
 
-    async function deleteBoards(){
-        const docRef = doc(db, "board");
-        const docSnap = await getDoc(docRef);
-        if(docSnap.exists()){
-            await deleteDoc(docRef);
-            const filteredBoard = boards.filter((board)=>board.isChecked !== true);
-            setBoards(filteredBoard);
-        }else {
-            alert("존재하지 않는 목록입니다.")
-        }
-       
+    // firebase에서 게시물 가져와서 -> 체크된 게시물 선별해서 저장-> firebase에 업데이트하기 
+    // async function deleteBoards(){
 
-    }
+
+    // }
 
     async function clickCheckBox(id, checked){
         const clickBoards = boards.map((board)=>board.id === id?
@@ -64,7 +55,8 @@ function Board (){
         <header>
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
-          <button onClick={deleteBoards}>삭제</button>
+            {}
+          {/* <button onClick={deleteBoards}>삭제</button> */}
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
         </header>
@@ -85,7 +77,7 @@ function Board (){
                 <input 
                 type='checkbox'
                 checked={board.isChecked}
-                onChange={() => clickCheckBox(board.id)}
+                onChange={(e) => clickCheckBox(board.id, e.target.checked)}
                 />
                 </td>
                 <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
