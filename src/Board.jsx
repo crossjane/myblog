@@ -23,7 +23,8 @@ function Board (){
 
     }
 
-    // firebase에서 게시물 가져와서 -> 체크된 게시물 선별해서 저장-> firebase에 업데이트하기 
+    // firebase에서 게시물 가져와서 -> 체크된 게시물 선별해서 저장-> firebase에 업데이트하기 ?
+    // firebase에서 체크된 게시물 비교해서 삭제하기?
     // async function deleteBoards(){
 
 

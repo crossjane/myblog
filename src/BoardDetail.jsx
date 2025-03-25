@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import db from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 
 
@@ -42,9 +42,17 @@ function BoardDetail(){
         setTempContent(board.content);
     }
 
-    function editSave(){
+    async function editSave(){
+        // 완료버튼 눌렀을떄 -> temp내용이 firebase로 등록됨. 
+        const docRef = doc(db, "board", board.id);
+        await updateDoc(docRef,{
+            content: tempContent
+        });
+        setBoard({...board, content:tempContent});
+        setIsEdit(false);
+        setTempContent("");
 
-    }
+        }
 
     useEffect(() => {
         getBoard();
@@ -75,14 +83,15 @@ function BoardDetail(){
     <>
     <input
         type='text'
-        value={board.content}
+        value={tempContent}
         onChange={changeEditContent}
 
         />
-
-       <button onClick={editContent}>수정</button> 
+    <button onClick={editSave}>완료</button> 
+       
     </>
-    :  <button onClick={editSave}>완료</button> 
+    :  
+    <button onClick={editContent}>수정</button> 
 
 
     }
