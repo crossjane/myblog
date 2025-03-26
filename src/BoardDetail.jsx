@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import db from './firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 
 
@@ -13,6 +13,9 @@ function BoardDetail(){
     const [board, setBoard] = useState();
     const [tempContent, setTempContent] = useState("");
     const [isEdit, setIsEdit] = useState(false);
+    const [comments, setComments] = useState([]);
+    const [commentId, setCommentId] = useState();
+    const [tempComment, setTempComment] = useState("");
 
     const {id} = useParams();
 
@@ -53,6 +56,18 @@ function BoardDetail(){
         setTempContent("");
 
         }
+
+    function changeComment(e){
+        setTempComment(e.target.value);
+    }
+
+    function saveComment(){
+        setComments(tempComment);
+        addDoc
+        setTempComment("");
+    }
+
+
 
     useEffect(() => {
         getBoard();
@@ -98,6 +113,15 @@ function BoardDetail(){
     <button onClick={()=>navigate("/boards")}>목록으로 가기</button>
 </div>
 
+<div>{}</div>
+    <div>
+        <input
+            type='text'
+            value={tempComment}
+            onChange={changeComment}
+        />
+        <button onClick={saveComment}>댓글 등록</button>
+    </div>
 
 </div>
 

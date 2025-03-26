@@ -25,10 +25,29 @@ function Board (){
 
     // firebase에서 게시물 가져와서 -> 체크된 게시물 선별해서 저장-> firebase에 업데이트하기 ?
     // firebase에서 체크된 게시물 비교해서 삭제하기?
-    // async function deleteBoards(){
+    async function deleteBoards(){
+
+      const docRef = doc(db, "board", boards.id);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.exists()){
+        const copyBoard =[...boards];
+      const filteredBoard = copyBoard.filter((board)=>!board.isChecked);
+      setBoards(filteredBoard);
+       await deleteDoc(doc(db, "board", board));
+
+       
+      
+      }else{
+        alert("존재하지 않는 게시물입니다.");
+      }
+    
 
 
-    // }
+      
+      
+
+    }
 
     async function clickCheckBox(id, checked){
         const clickBoards = boards.map((board)=>board.id === id?
@@ -57,7 +76,7 @@ function Board (){
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
             {}
-          {/* <button onClick={deleteBoards}>삭제</button> */}
+          <button onClick={deleteBoards}>삭제</button>
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
         </header>
@@ -78,12 +97,12 @@ function Board (){
                 <input 
                 type='checkbox'
                 checked={board.isChecked}
-                onChange={(e) => clickCheckBox(board.id, e.target.checked)}
+                onChange={() => clickCheckBox(board.id)}
                 />
                 </td>
                 <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
                 <td onClick={() => gotoDetail(board.id)}>{board.title}</td>
-                <td onClick={() => gotoDetail(board.id)}>{board.creatAt}</td>
+                <td onClick={() => gotoDetail(board.id)}>{board.createdAt}</td>
             </tr>
           ))
 
