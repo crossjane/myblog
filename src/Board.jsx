@@ -25,27 +25,33 @@ function Board (){
 
     // firebase에서 게시물 가져와서 -> 체크된 게시물 선별해서 저장-> firebase에 업데이트하기 ?
     // firebase에서 체크된 게시물 비교해서 삭제하기?
+    // 체크된 것만 골라서->firebase에서 지워-> ui도지워
     async function deleteBoards(){
+      const copyBoard =[...boards];
+      const filteredBoardId = copyBoard.filter((board)=>board.isChecked)
+                                        .map((board) => board.id);
 
-      const docRef = doc(db, "board", boards.id);
-      const docSnap = await getDoc(docRef);
+        //체크된 것만 골랏음 -> firebase와 대조해서 지우기. 
+        // firebase에서 여러개 게시물 다 가져와서 -> id대조. -> 삭제 
+      const docSnap = await getDocs(collection(db,"board"));
 
-      if(docSnap.exists()){
-        const copyBoard =[...boards];
-      const filteredBoard = copyBoard.filter((board)=>!board.isChecked);
-      setBoards(filteredBoard);
-       await deleteDoc(doc(db, "board", board));
+      //firebase에서 골라내기 
+    for(let i = 0; i < docSnap.docs.length; i++){ 
+      const docLists = docSnap.docs[i];// firebase값
+      const docId = docLists.id;// firebase에 있는 id들.
+     
+      // 여기서 firebase id와 실제로 체크된 id를 대조함, 삭제제
+     if(filteredBoardId.includes(docId)){
+      await deleteDoc(doc(db,"board", docId));
+     }
 
-       
-      
-      }else{
-        alert("존재하지 않는 게시물입니다.");
-      }
-    
+    }
+
+    // UI도지워???앜
+    const deletedBoard = copyBoard.filter((board)=>!board.isChecked);
+    setBoards(deletedBoard);
 
 
-      
-      
 
     }
 
@@ -97,7 +103,7 @@ function Board (){
                 <input 
                 type='checkbox'
                 checked={board.isChecked}
-                onChange={() => clickCheckBox(board.id)}
+                onChange={() => clickCheckBox(board.id, e.target.checked)}
                 />
                 </td>
                 <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
