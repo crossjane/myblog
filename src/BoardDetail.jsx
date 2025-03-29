@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import db from './firebase';
-import { addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 
 
@@ -61,10 +61,14 @@ function BoardDetail(){
         setTempComment(e.target.value);
     }
 
-    function saveComment(){
-        setComments(tempComment);
-        addDoc
+    async function saveComment(){
+ 
+        const commentsRef = collection(db, "board", id, "comments");
+        await addDoc(commentsRef, {
+            comments:tempComment
+        })
         setTempComment("");
+   
     }
 
 
@@ -113,7 +117,12 @@ function BoardDetail(){
     <button onClick={()=>navigate("/boards")}>목록으로 가기</button>
 </div>
 
-<div>{}</div>
+
+{board?
+    <div>{board.id.comments}</div>
+    :
+    null
+}
     <div>
         <input
             type='text'
@@ -122,7 +131,6 @@ function BoardDetail(){
         />
         <button onClick={saveComment}>댓글 등록</button>
     </div>
-
 </div>
 
 

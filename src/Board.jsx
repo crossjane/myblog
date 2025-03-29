@@ -24,7 +24,7 @@ function Board (){
     }
 
     // for문 돌면서 가져와서 -> 있으면 -> 삭제시키기. 
-    
+
     // 체크된 것만 골라서->firebase에서 지워-> ui도지워
     async function deleteBoards(){
       const copyBoard =[...boards];
@@ -81,7 +81,6 @@ function Board (){
         <header>
         <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
         <div className='btns'>
-            {}
           <button onClick={deleteBoards}>삭제</button>
           <button onClick={gotoWrite}>글쓰기</button>
         </div>
@@ -103,12 +102,12 @@ function Board (){
                 <input 
                 type='checkbox'
                 checked={board.isChecked}
-                onChange={() => clickCheckBox(board.id, e.target.checked)}
+                onChange={(e) => clickCheckBox(board.id, e.target.checked)}
                 />
                 </td>
                 <td onClick={() => gotoDetail(board.id)}>{board.id}</td>
                 <td onClick={() => gotoDetail(board.id)}>{board.title}</td>
-                <td onClick={() => gotoDetail(board.id)}>{board.createdAt}</td>
+                {/* <td onClick={() => gotoDetail(board.id)}>{board.createdAt}</td> */}
             </tr>
           ))
 
