@@ -20,6 +20,8 @@ function BoardDetail(){
     const {id} = useParams();
 
 
+    
+
     async function getBoard(){
         const docRef = doc(db, "board", id);
         const docSnap = await getDoc(docRef);
