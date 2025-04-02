@@ -1,5 +1,5 @@
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import React , {useEffect, useState} from 'react';
 import db from './firebase';
 import { useParams } from 'react-router-dom';
@@ -24,24 +24,23 @@ function Categories(){
   }
 
 
-async function getBoard(){
-    const docRef = doc(db, "board", id);
-    const docSnap = await getDoc(docRef);
+async function loadBoard(){
+    const query = await getDocs(collection(db,"board", id, ));
+    const newBoard = [];
+    query.forEach(()=>{
+        const id = board.id;
+        const data = board.data();
+        const formatBoard = {id,...data};
+        newBoard.push(formatBoard);
+    });
 
-    if(docSnap.exists()){
-        const id = docSnap.id;
-        const data = docSnap.data();
-        const formatBoard = {id, ...data};
-        setBoard(formatBoard);
-    }
+    setBoard(newBoard);
 
 }
 
-
 useEffect(()=>{
-    getBoard();
+    loadBoard();
 },[]);
-
 
 return(
 
