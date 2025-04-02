@@ -4,6 +4,7 @@ import Board from "./Board";
 import Todo from "./Todo";
 import Write from "./Write";
 import BoardDetail from "./BoardDetail";
+import Categories from "./Categories";
 
 function App() {
 
@@ -16,6 +17,8 @@ function App() {
      <Route path="todo" element={<Todo />} />
      <Route path="write" element={<Write />} />
      <Route path="boards/:id" element={<BoardDetail/>}/>
+     <Route path="categories" element={<Categories />}/>
+     {/* <Route path="categories/:id" element={<CategoriesDetail />}/> */}
   </Routes>
 
 

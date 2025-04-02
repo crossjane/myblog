@@ -24,35 +24,17 @@ function Board (){
     }
 
     // for문 돌면서 가져와서 -> 있으면 -> 삭제시키기. 
-
-    // 체크된 것만 골라서->firebase에서 지워-> ui도지워
     async function deleteBoards(){
-      const copyBoard =[...boards];
-      const filteredBoardId = copyBoard.filter((board)=>board.isChecked)
-                                        .map((board) => board.id);
-
-        //체크된 것만 골랏음 -> firebase와 대조해서 지우기. 
-        // firebase에서 여러개 게시물 다 가져와서 -> id대조. -> 삭제 
-      const docSnap = await getDocs(collection(db,"board"));
-
-      //firebase에서 골라내기 
-    for(let i = 0; i < docSnap.docs.length; i++){ 
-      const docLists = docSnap.docs[i];// firebase값
-      const docId = docLists.id;// firebase에 있는 id들.
-     
-      // 여기서 firebase id와 실제로 체크된 id를 대조함, 삭제제
-     if(filteredBoardId.includes(docId)){
-      await deleteDoc(doc(db,"board", docId));
-     }
-
-    }
-
-    // UI도지워???앜
-    const deletedBoard = copyBoard.filter((board)=>!board.isChecked);
-    setBoards(deletedBoard);
-
-
-
+      const copyBoards =[...boards];
+  
+      let i = 0;
+      for(const copyBoard of copyBoards) {
+        if(copyBoard.isChecked) {
+          await deleteDoc(doc(db,"board", copyBoard.id));
+          copyBoards.splice(i, 0);
+        }
+        i++;
+      }
     }
 
     async function clickCheckBox(id, checked){

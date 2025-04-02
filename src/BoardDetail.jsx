@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import db from './firebase';
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 
 
 
@@ -14,17 +14,17 @@ function BoardDetail(){
     const [tempContent, setTempContent] = useState("");
     const [isEdit, setIsEdit] = useState(false);
     const [comments, setComments] = useState([]);
-    const [commentId, setCommentId] = useState();
     const [tempComment, setTempComment] = useState("");
 
     const {id} = useParams();
 
 
-    
+
 
     async function getBoard(){
         const docRef = doc(db, "board", id);
         const docSnap = await getDoc(docRef);
+
 
         if(docSnap.exists()){
             const id = docSnap.id;
@@ -33,6 +33,22 @@ function BoardDetail(){
             setBoard(formatBoard);
         }
 
+    }
+
+    async function loadComments(){
+        console.log("id",id)
+        const query = await getDocs(collection(db, "board", id, "comments"));
+        const newComments = [];
+        query.forEach((doc) =>{
+        const id = doc.id;
+        const data = doc.data();  
+        const comment = {id, ...data};
+        newComments.push(comment);  
+    });
+
+    setComments(newComments);
+
+   
     }
 
     function changeEditContent(e){
@@ -72,11 +88,11 @@ function BoardDetail(){
         setTempComment("");
    
     }
-
-
+    console.log("댓글",comments)
 
     useEffect(() => {
         getBoard();
+        loadComments();
     }, []);
 
     return(
@@ -120,8 +136,13 @@ function BoardDetail(){
 </div>
 
 
-{board?
-    <div>{board.id.comments}</div>
+{comments?
+
+    <div>
+        {
+            comments.map((comment)=><p key={comment.id}>{comment.comments}</p>)
+        }
+    </div>
     :
     null
 }
