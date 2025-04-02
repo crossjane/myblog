@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import db from './firebase';
-import { getDoc, getDocs } from 'firebase/firestore';
+import { getDoc, getDocs, collection, deleteDoc,doc, updateDoc } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 
 function CategoriesDetail(){
@@ -32,51 +32,48 @@ function CategoriesDetail(){
         setTempContent("");
       }
     
+      useEffect(()=>{
+        getBoard();
+
+      },[])
 
 
     return(
       
-        <div className ='board-detail'>
+    <div className ='board-detail'>
 
-    {board ?
-            <>
+        {board ?
+                <>
+                
+                    <div className='board-title'>{board.title}</div>
+                    <div className='board-contents'>{board.content}</div>
             
-                <div className='board-title'>{board.title}</div>
-                <div className='board-contents'>{board.content}</div>
-          
-            </>
-    : 
-           null
+                </>
+        : 
+            null
 
-    }
+        }
 
 
 
-<div className ='btns'>
-    {isEdit?
-    <>
-    <input
-        type='text'
-        value={tempContent}
-        onChange={changeEditContent}
-
-        />
-    <button onClick={editSave}>완료</button> 
-       
-    </>
-    :  
+    <div className ='btns'>
   
-    <button onClick={editContent}>수정</button> 
+            <input
+                type='text'
+                value={tempContent}
+            />
+            <button onClick={saveBoard}>글 올리기</button> 
+            
+       
+        {/* <button onClick={()=>navigate("/boards")}>목록으로 가기</button> */}
+       
+     </div>
+    </div>
 
 
-    }
-    <button onClick={()=>navigate("/boards")}>목록으로 가기</button>
-</div>
 
 
 
-
-</>
 
 
 
