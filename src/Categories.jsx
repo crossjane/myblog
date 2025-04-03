@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 function Categories(){
 
   const [currentTab, setCurrentTab] = useState(0);
-  const [board, setBoard] = useState();
+  const [board, setBoard] = useState([]);
 
   const {id} = useParams();
 
@@ -25,11 +25,11 @@ function Categories(){
 
 
 async function loadBoard(){
-    const query = await getDocs(collection(db,"board", id, ));
+    const query = await getDocs(collection(db,"category", id, "board" ));
     const newBoard = [];
-    query.forEach(()=>{
-        const id = board.id;
-        const data = board.data();
+    query.forEach((doc)=>{
+        const id = doc.id;
+        const data = doc.data();
         const formatBoard = {id,...data};
         newBoard.push(formatBoard);
     });
@@ -37,6 +37,10 @@ async function loadBoard(){
     setBoard(newBoard);
 
 }
+
+
+
+
 
 useEffect(()=>{
     loadBoard();
@@ -51,13 +55,13 @@ return(
     <div className='tab-container'>
         {menuArr.map((menu, index)=>{
             return (
-                <ul>
+               
                     <li
                     key = {index}
                     className= {currentTab === index? "tabmenu-focused" : "tabmenu"}
                     onClick={()=>selectMenuHandler(index)}
                     >{menu.name}</li>
-                </ul>
+             
             )
         })}
     </div>
@@ -80,18 +84,21 @@ return(
         </tr>
       </thead>
       <tbody>
-      
-   
-        <tr>
-            <td>
+        {board.map((boards)=>
+        <tr key={boards.id}>
+           <td>
             <input 
             type='checkbox'
             />
             </td>
-            <td>{board.id}</td>
-            <td>{board.content}.</td>
+          <td>{boards.title}</td>
+          <td>{boards.content}</td>
+          </tr>
+        )}
+    
+           
           
-        </tr>
+       
     
     
       </tbody>
