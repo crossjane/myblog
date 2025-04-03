@@ -1,12 +1,14 @@
 
-import { collection,  getDocs } from 'firebase/firestore';
+import { collection,  doc,  getDocs } from 'firebase/firestore';
 import React , {useEffect, useState} from 'react';
 import db from './firebase';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 
 function Categories(){
+
+  let navigate = useNavigate();
 
   const [currentTab, setCurrentTab] = useState(0);
   const [board, setBoard] = useState([]);
@@ -25,7 +27,7 @@ function Categories(){
 
 
 async function loadBoard(){
-    const query = await getDocs(collection(db,"category", id, "board" ));
+    const query = doc((db,"category", id, "board"));
     const newBoard = [];
     query.forEach((doc)=>{
         const id = doc.id;
@@ -36,6 +38,10 @@ async function loadBoard(){
 
     setBoard(newBoard);
 
+}
+
+function gotoDetail(){
+  navigate(`/categories/${id}`);
 }
 
 
@@ -89,10 +95,12 @@ return(
            <td>
             <input 
             type='checkbox'
+            
             />
             </td>
-          <td>{boards.title}</td>
-          <td>{boards.content}</td>
+            <td onClick={()=>gotoDetail(board.id)}>{board.id}</td>
+            <td onClick={()=>gotoDetail(board.id)}>{boards.title}</td>
+            <td onClick={()=>gotoDetail(board.id)}>{boards.content}</td>
           </tr>
         )}
     
