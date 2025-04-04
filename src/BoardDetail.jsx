@@ -37,9 +37,9 @@ function BoardDetail(){
 
     async function loadComments(){
         console.log("id",id)
-        const query = await getDocs(collection(db, "board", id, "comments"));
-        const newComments = [];
-        query.forEach((doc) =>{
+     const query = await getDocs(collection(db, "board", id, "comments"));
+     const newComments = [];
+     query.forEach((doc) =>{
         const id = doc.id;
         const data = doc.data();  
         const comment = {id, ...data};
