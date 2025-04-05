@@ -6,6 +6,7 @@ import Write from "./Write";
 import BoardDetail from "./BoardDetail";
 import Categories from "./Categories";
 import CategoriesDetail from "./CategoriesDetail";
+import CategoryWrite from "./CategoryWrite";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
      <Route path="boards/:id" element={<BoardDetail/>}/>
      <Route path="categories" element={<Categories />}/>
      <Route path="categories/:id" element={<CategoriesDetail />}/>
+     <Route path="categorywrite" element={<CategoryWrite />}/>
   </Routes>
 
 
