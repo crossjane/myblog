@@ -19,7 +19,7 @@ function Categories(){
     query.forEach((doc)=>{
       const id = doc.id;
       const data = doc.data();
-      const formatCategory = {id,...data};
+      const formatCategory = {id,...data, isChecked: false};
       newCategories.push(formatCategory);
 
     })
@@ -95,6 +95,8 @@ return(
            <td>
             <input 
             type='checkbox'
+            checked={board.isChecked}
+      
             
             />
             </td>

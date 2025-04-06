@@ -11,13 +11,15 @@ function CategoriesDetail(){
     const [tempComment, setTempComment] = useState("");
     const [comments, setComments] = useState([]);
  
-    const {id} = useParams();
+    const {categoryId} = useParams();
+    
+    const {boardId}  = useParams();
 
     // import { doc } from "firebase/firestore"; 
 
     // const messageRef = doc(db, "rooms", "roomA", "messages", "message1");
     async function getBoard(){
-        const docRef = doc(db, "category", id, "board", boardId);
+        const docRef = doc(db, "category", categoryId, "board", boardId);
         const docSnap = await getDoc(docRef);
 
        if(docSnap.exists()){
@@ -39,7 +41,7 @@ function CategoriesDetail(){
     }
 
     async function loadComment(){
-        const query = await getDocs(collection(db, "category", id, "board", boardId, "comments"));
+        const query = await getDocs(collection(db, "category", categoryId, "board", boardId, "comments"));
         const newComments = [];
         query.forEach((doc)=>{
             const id = doc.id;
