@@ -3,6 +3,7 @@ import React , {useEffect, useState} from 'react';
 import db from './firebase';
 import { useNavigate } from 'react-router-dom';
 
+// 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
 
 
 function Categories(){
@@ -12,6 +13,7 @@ function Categories(){
   
   const [categories, setCategories] = useState([]);
   const [boards, setBoards] = useState([]);
+  const [categoryId, setCategoryId] = useState();
 
   async function loadCategories(){
     const query = await getDocs(collection(db, "category"));
@@ -29,6 +31,7 @@ function Categories(){
 
 
  async function clickCategory(id){
+    setCategoryId(id);
     const query = await getDocs(collection(db, "category", id,"board" ));
     const newBoards = [];
     query.forEach((doc)=>{
@@ -43,9 +46,13 @@ function Categories(){
 
   }
 
+//q보드를 눌러씅ㄹ떄 카테고리 아이디를 같이 넘겨줘야지 
+//상태로 관리하라고 누른 탭을  category by board  탭을 눌렀을때 뭘눌렀는지를 상태 
+//상태로 받아서 넘겨야한다 i카테고리 아이디를. 지금은 보드 id만 넘기는데 뭘눌렀는지 상태로 받아오기 . 
 
-  function gotoDetail(id){
-    navigate(`/categories/${id}`);
+  function gotoDetail(boardId){
+    navigate(`/category/${categoryId}/${boardId}`);
+  
   }
 
 

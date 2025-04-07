@@ -12,8 +12,9 @@ function CategoriesDetail(){
     const [comments, setComments] = useState([]);
  
     const {categoryId} = useParams();
-    
     const {boardId}  = useParams();
+    console.log("카테고리아이디",categoryId);
+    console.log("보드아이디디",boardId);
 
     // import { doc } from "firebase/firestore"; 
 
@@ -30,8 +31,9 @@ function CategoriesDetail(){
          
      
         console.log("id", id)
+        
+       console.log("baorddata",data);
        }
-       console.log("baord",board );
        
     }
 
@@ -41,22 +43,24 @@ function CategoriesDetail(){
     }
 
     async function loadComment(){
-        const query = await getDocs(collection(db, "category", categoryId, "board", boardId, "comments"));
+        const query = await getDocs(collection(db, "category", categoryId, "board", boardId, "comment"));
         const newComments = [];
         query.forEach((doc)=>{
             const id = doc.id;
             const data = doc.data();
+            console.log("코멘트데이터터",data);
             const formatComment ={id, ...data};
             newComments.push(formatComment);
-
+           
         });
         setComments(newComments);
         console.log("코멘트",newComments);
-
+       
     }
 
     function saveComment(){
-        // 데이터를 불러오기. (밑에서) -> 
+        // 데이터를 불러오기. (밑에서) -> tempComment의 댓글을 가져와서 firebase에 저장 . 
+        
 
     }
 
@@ -87,7 +91,7 @@ function CategoriesDetail(){
 
         
         {comments.map((comment)=>
-        <p key={comment.id}>{comment.comment}</p>)}
+        <p key={comment.id}>{comment.content}</p>)}
 
         <div>
             <input
