@@ -13,7 +13,7 @@ function CategoryWrite(){
 
     let navigate = useNavigate();
 
-    const {categoryId} = useParams();
+    const {categoryId, boardId} = useParams();
 
 
 
@@ -28,10 +28,11 @@ function CategoryWrite(){
 
     async function saveClick(){
         // 클릭시 , 데이터 들이 firebase 에 push 되어야함 . , 페이지는 완성본으로로load 
-        const docRef = await addDoc(collection(db, "board"),{title, contents});
+        //?? 안나옴. detail로 이동했을떄 안나옴왜안나옴 !
+        const docRef = await addDoc(collection(db, "category",categoryId,"board"),{title, contents});
         const docSnap = await getDoc(docRef);
         if(docSnap.exists()){
-            navigate(`/categories/${categoryId}`);
+            navigate(`/categories/${categoryId}/board/${boardId}`);
         }else{
             alert("존재하지 않는 게시글 입니다.");
             return;

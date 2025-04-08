@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import db from './firebase';
-import { doc, updateDoc, getDocs, collection, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDocs, collection, getDoc, addDoc } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function CategoriesDetail(){
@@ -48,19 +48,23 @@ function CategoriesDetail(){
         query.forEach((doc)=>{
             const id = doc.id;
             const data = doc.data();
-            console.log("코멘트데이터터",data);
             const formatComment ={id, ...data};
             newComments.push(formatComment);
            
         });
         setComments(newComments);
-        console.log("코멘트",newComments);
        
     }
 
-    function saveComment(){
+    async function saveComment(){
         // 데이터를 불러오기. (밑에서) -> tempComment의 댓글을 가져와서 firebase에 저장 . 
-        
+        const commentRef = collection(db,"category",categoryId, "board", boardId, "comment");
+        await addDoc(commentRef, {
+            content : tempComment
+        })
+        setTempComment("");
+        await loadComment(); 
+
 
     }
 
@@ -85,7 +89,7 @@ function CategoriesDetail(){
 
 
     <div className ='btns'>
-        <button onClick={()=>navigate("/categories")}>목록으로 가기</button>
+        <button onClick={()=>navigate(`/categories`)}>목록으로 가기</button>
        
      </div>
 

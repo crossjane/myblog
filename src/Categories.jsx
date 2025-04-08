@@ -4,7 +4,8 @@ import db from './firebase';
 import { useNavigate } from 'react-router-dom';
 
 // 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
-
+// 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨 
+//콜백??
 
 function Categories(){
 
@@ -14,6 +15,7 @@ function Categories(){
   const [categories, setCategories] = useState([]);
   const [boards, setBoards] = useState([]);
   const [categoryId, setCategoryId] = useState();
+
 
   async function loadCategories(){
     const query = await getDocs(collection(db, "category"));
@@ -27,6 +29,12 @@ function Categories(){
     })
 
     setCategories(newCategories);
+
+    if (newCategories.length > 0) {
+      const firstCategoryId = newCategories[0].id;
+      clickCategory(firstCategoryId);
+    }
+   
   }
 
 
@@ -43,6 +51,24 @@ function Categories(){
     })
 
     setBoards(newBoards);
+    
+
+  }
+
+
+  function changeCheckbox(e,boardId){
+    const updatedBoards = boards.map((board)=>board.id === boardId?
+    {...board, isChecked: e.target.checked} : board);
+
+    setBoards(updatedBoards);
+  }
+
+  function deleteBoards(){
+  
+    //isChecked ture인 아이템들을 찾음 . -> 그 외의것만 filter하기 
+    //firebase에서도 삭제를 해야함. !!!
+    const filteredBoards = boards.filter((board) => (!board.isChecked));
+    setBoards(filteredBoards);
 
   }
 
@@ -51,9 +77,14 @@ function Categories(){
 //상태로 받아서 넘겨야한다 i카테고리 아이디를. 지금은 보드 id만 넘기는데 뭘눌렀는지 상태로 받아오기 . 
 
   function gotoDetail(boardId){
-    navigate(`/category/${categoryId}/${boardId}`);
+    navigate(`/categories/${categoryId}/board/${boardId}`);
   
   }
+
+  function gotoWrite(){
+    navigate(`/categories/${categoryId}/write`);
+  }
+
 
 
 useEffect(()=>{
@@ -83,8 +114,8 @@ return(
   
 
     <div className='btns'>
-      <button >삭제</button>
-      <button>글쓰기</button>
+      <button onClick={deleteBoards}>삭제</button>
+      <button onClick={gotoWrite}>글쓰기</button>
     </div>
     </header>
     <table className='board-table'>
@@ -103,6 +134,7 @@ return(
             <input 
             type='checkbox'
             checked={board.isChecked}
+            onChange={(e)=>changeCheckbox(e,board.id)}
       
             
             />
