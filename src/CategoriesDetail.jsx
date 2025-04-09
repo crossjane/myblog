@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import db from './firebase';
-import { doc, updateDoc, getDocs, collection, getDoc, addDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDocs, collection, getDoc, addDoc, orderBy, query } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function CategoriesDetail(){
@@ -13,12 +13,7 @@ function CategoriesDetail(){
  
     const {categoryId} = useParams();
     const {boardId}  = useParams();
-    console.log("카테고리아이디",categoryId);
-    console.log("보드아이디디",boardId);
 
-    // import { doc } from "firebase/firestore"; 
-
-    // const messageRef = doc(db, "rooms", "roomA", "messages", "message1");
     async function getBoard(){
         const docRef = doc(db, "category", categoryId, "board", boardId);
         const docSnap = await getDoc(docRef);
@@ -28,11 +23,7 @@ function CategoriesDetail(){
         const data = docSnap.data();
         const formatBoard = {id,...data};
         setBoard(formatBoard);
-         
-     
-        console.log("id", id)
-        
-       console.log("baorddata",data);
+
        }
        
     }
@@ -43,9 +34,11 @@ function CategoriesDetail(){
     }
 
     async function loadComment(){
-        const query = await getDocs(collection(db, "category", categoryId, "board", boardId, "comment"));
+        const q = query(collection(db, "category", categoryId, "board", boardId, "comment"), orderBy("createdAt", "asc"));
+        const data = await getDocs(q);
         const newComments = [];
-        query.forEach((doc)=>{
+        data.forEach((doc)=>{
+            console.log(doc.data())
             const id = doc.id;
             const data = doc.data();
             const formatComment ={id, ...data};
@@ -56,16 +49,19 @@ function CategoriesDetail(){
        
     }
 
+
     async function saveComment(){
         // 데이터를 불러오기. (밑에서) -> tempComment의 댓글을 가져와서 firebase에 저장 . 
         const commentRef = collection(db,"category",categoryId, "board", boardId, "comment");
-        await addDoc(commentRef, {
-            content : tempComment
-        })
+
+        const newComment = {
+            content : tempComment,
+            createdAt: new Date()
+        }
+        await addDoc(commentRef, newComment)
         setTempComment("");
-        await loadComment(); 
-
-
+        
+        setComments(prev => [...prev, newComment]);
     }
 
     
@@ -75,6 +71,23 @@ function CategoriesDetail(){
 
       },[])
 
+      
+      function count(number) {
+        console.log("number :", number);
+      }
+
+      function timeout(callbackFn) {
+        setTimeout(() => {
+
+            callbackFn(1);
+            setTimeout(() => {
+                callbackFn(2);
+            }, 1000);
+        }, 3000);
+
+      }
+
+      timeout(count)
 
     return(
       

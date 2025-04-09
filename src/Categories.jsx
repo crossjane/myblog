@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import React , {useEffect, useState} from 'react';
 import db from './firebase';
 import { useNavigate } from 'react-router-dom';
@@ -63,13 +63,24 @@ function Categories(){
     setBoards(updatedBoards);
   }
 
-  function deleteBoards(){
+  async function deleteBoards(){
   
     //isChecked ture인 아이템들을 찾음 . -> 그 외의것만 filter하기 
-    //firebase에서도 삭제를 해야함. !!!
-    const filteredBoards = boards.filter((board) => (!board.isChecked));
-    setBoards(filteredBoards);
+    //firebase에서도 삭제해야. for문돌면서 -> 삭제 시키기 하나씩. 
+    // const filteredBoards = boards.filter((board) => (!board.isChecked));
+    // setBoards(filteredBoards);
+  const deletedBoards =[];
 
+  //firebase에서 선택된것 삭제 -> 안된것, push.
+    for(const board of boards){
+      if(board.isChecked){
+        await deleteDoc(doc(db,"category", categoryId,"board", board.id));
+      } else{
+        deletedBoards.push(board);
+      }
+    }
+   
+  setBoards(deletedBoards);
   }
 
 //q보드를 눌러씅ㄹ떄 카테고리 아이디를 같이 넘겨줘야지 
