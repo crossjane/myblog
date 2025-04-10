@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import db from './firebase';
-import { doc, updateDoc, getDocs, collection, getDoc, addDoc, orderBy, query } from 'firebase/firestore';
+import { doc, updateDoc, getDocs, collection, getDoc, addDoc, orderBy, query, deleteDoc } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function CategoriesDetail(){
@@ -21,7 +21,7 @@ function CategoriesDetail(){
        if(docSnap.exists()){
         const id = docSnap.id;
         const data = docSnap.data();
-        const formatBoard = {id,...data};
+        const formatBoard = {id,...data};           
         setBoard(formatBoard);
 
        }
@@ -41,7 +41,7 @@ function CategoriesDetail(){
             console.log(doc.data())
             const id = doc.id;
             const data = doc.data();
-            const formatComment ={id, ...data};
+            const formatComment ={id, ...data, isEdit: false};
             newComments.push(formatComment);
            
         });
@@ -71,23 +71,49 @@ function CategoriesDetail(){
 
       },[])
 
+    async function deleteComment(commentId){
+        await deleteDoc(doc(db, "category", categoryId, "board", boardId, "comment",commentId));
+        setComments(prev => prev.filter((comment) => comment.id !== commentId));
+
+      }
+
+
+    function editComment(commentId){
+
+        // 수정클릭시 , input창으로변경(하단에서하기).
+        //해당하는 코멘트 id값 찾아와서 comments의 id와 같으면 
+        // //edit 값 주기 isEdit  tempContent에 input이랑 연결한값주기기
+        const editedComment = comments.map((comment)=>comment.id === commentId?
+            {...comment, isEdit: true}: comment
+        );
+        setComments(editedComment);
+    
+       
+
+    
+
+      }
+
+     async function editSaveComment(commentId){
+        //받아서 , comment 불러와서 -> 해당하는 id map돌려서 찾기 -> tempComment값을을 업데이트 firebase에 업데이트,  수정. 
+        const docRef = doc(db, "category", categoryId, "board", boardId, "comment", commentId);
+        await updateDoc(docRef,{
+            content: tempComment
+        });
+
+        setComments(docRef);
+        setTempComment("");
+
+
+      }
+
+      function changeEditComment(e){
+        setTempComment(e.target.value);
+      }
+
+   
       
-      function count(number) {
-        console.log("number :", number);
-      }
-
-      function timeout(callbackFn) {
-        setTimeout(() => {
-
-            callbackFn(1);
-            setTimeout(() => {
-                callbackFn(2);
-            }, 1000);
-        }, 3000);
-
-      }
-
-      timeout(count)
+  
 
     return(
       
@@ -108,7 +134,24 @@ function CategoriesDetail(){
 
         
         {comments.map((comment)=>
-        <p key={comment.id}>{comment.content}</p>)}
+        <p key={comment.id}>{comment.content}  
+            {comment.isEdit?
+                <>
+                <input
+                    type='text'
+                    value={tempComment}
+                    onChange={changeEditComment}
+                />
+                <button onClick={()=>editSaveComment(comment.id)}>저장</button>
+                </>
+                :
+
+                <>
+                <button onClick={()=>deleteComment(comment.id)}>삭제</button>
+                <button onClick={()=>editComment(comment.id)}>수정</button>
+                </>
+            }
+        </p>)}
 
         <div>
             <input
@@ -118,6 +161,7 @@ function CategoriesDetail(){
             />
             <button onClick={saveComment}>댓글 등록</button>
         </div>
+ 
 
 
     </div>
