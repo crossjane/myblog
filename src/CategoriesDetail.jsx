@@ -41,7 +41,7 @@ function CategoriesDetail(){
             console.log(doc.data())
             const id = doc.id;
             const data = doc.data();
-            const formatComment ={id, ...data, isEdit: false};
+            const formatComment ={id, ...data, isEdit: false, tempComment:""};
             newComments.push(formatComment);
            
         });
@@ -84,7 +84,7 @@ function CategoriesDetail(){
         //해당하는 코멘트 id값 찾아와서 comments의 id와 같으면 
         // //edit 값 주기 isEdit  tempContent에 input이랑 연결한값주기기
         const editedComment = comments.map((comment)=>comment.id === commentId?
-            {...comment, isEdit: true}: comment
+            {...comment, isEdit: true, tempComment: comment.content}: comment
         );
         setComments(editedComment);
     
@@ -101,14 +101,16 @@ function CategoriesDetail(){
             content: tempComment
         });
 
-        setComments(docRef);
+        loadComment();
         setTempComment("");
 
 
       }
 
-      function changeEditComment(e){
-        setTempComment(e.target.value);
+      function changeEditComment(e, index){
+        const copyComments = [...comments];
+        copyComments[index].tempComment = e.target.value;
+        setComments(copyComments);
       }
 
    
@@ -133,25 +135,27 @@ function CategoriesDetail(){
      </div>
 
         
-        {comments.map((comment)=>
-        <p key={comment.id}>{comment.content}  
-            {comment.isEdit?
+        {comments.map((comment, index)=>
+       
+            comment.isEdit?
                 <>
                 <input
                     type='text'
-                    value={tempComment}
-                    onChange={changeEditComment}
+                    value={comment.tempComment}
+                    onChange={(e)=>changeEditComment(e, index)}
                 />
                 <button onClick={()=>editSaveComment(comment.id)}>저장</button>
                 </>
                 :
 
                 <>
+                 <p key={comment.id}>{comment.content}  
                 <button onClick={()=>deleteComment(comment.id)}>삭제</button>
                 <button onClick={()=>editComment(comment.id)}>수정</button>
+                </p>
                 </>
-            }
-        </p>)}
+            
+        )}
 
         <div>
             <input

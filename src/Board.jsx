@@ -61,7 +61,7 @@ function Board (){
 
         <div className='board'>
         <header>
-        <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
+        <p className={"text-[25px] text-blue-600"}><b>게시판</b></p>
         <div className='btns'>
           <button onClick={deleteBoards}>삭제</button>
           <button onClick={gotoWrite}>글쓰기</button>

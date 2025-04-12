@@ -7,6 +7,8 @@ import BoardDetail from "./BoardDetail";
 import Categories from "./Categories";
 import CategoriesDetail from "./CategoriesDetail";
 import CategoryWrite from "./CategoryWrite";
+import Join from "./Join";
+import Login from "./Login";
 
 function App() {
 
@@ -22,6 +24,8 @@ function App() {
      <Route path="categories" element={<Categories />}/>
      <Route path="categories/:categoryId/board/:boardId" element={<CategoriesDetail />}/>
      <Route path="categories/:categoryId/write" element={<CategoryWrite />}/>
+     <Route path="categories/join" element={<Join />}/>
+     <Route path="categories/login" element={<Login />}/>
   </Routes>
 
 
