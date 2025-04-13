@@ -18,6 +18,8 @@ function Categories(){
 
 
   async function loadCategories(){
+
+    try{
     const query = await getDocs(collection(db, "category"));
     const newCategories =[];
     query.forEach((doc)=>{
@@ -35,11 +37,17 @@ function Categories(){
       clickCategory(firstCategoryId);
     }
    
+    } catch(error){
+      console.error("error", error);
+        alert("데이터를 불러올 수 없습니다.");
+    }
   }
 
 
  async function clickCategory(id){
     setCategoryId(id);
+
+    try{
     const query = await getDocs(collection(db, "category", id,"board" ));
     const newBoards = [];
     query.forEach((doc)=>{
@@ -51,7 +59,10 @@ function Categories(){
     })
 
     setBoards(newBoards);
-    
+    }catch(error){
+      console.error("error", error);
+      alert("페이지로 이동할 수 없습니다.");
+   }
 
   }
 
@@ -72,6 +83,8 @@ function Categories(){
   const deletedBoards =[];
 
   //firebase에서 선택된것 삭제 -> 안된것, push.
+
+  try{
     for(const board of boards){
       if(board.isChecked){
         await deleteDoc(doc(db,"category", categoryId,"board", board.id));
@@ -81,6 +94,10 @@ function Categories(){
     }
    
   setBoards(deletedBoards);
+    }catch(error){
+      console.log("error", error);
+      alert("삭제 할 수 없습니다.");
+    }
   }
 
 //q보드를 눌러씅ㄹ떄 카테고리 아이디를 같이 넘겨줘야지 
