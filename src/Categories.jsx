@@ -123,42 +123,52 @@ useEffect(()=>{
 return(
 
     <div className='board'>
+     <div className='flex justify-center items-center mb-6'>
+      <b className="text-2xl text-green-800 font-semibold font-inter">Jane's Life</b>
+    </div>
     <header>
-    <p style={{fontSize:'25px', color:'blue'}}><b>게시판</b></p>
-   
-    <div className='tab-container'>
-        {categories.map((category)=>{
-            return (
-               
-                    <li
-                    key = {category.id}
-                    // className= {currentTab === index? "tabmenu-focused" : "tabmenu"}
-                    onClick={()=>clickCategory(category.id)}
-                    >{category.name}</li>
-             
-            )
-        })}
+    
+    
+    <div className='flex justify-center items-center mb-6'>
+      <ul className='flex gap-4'>
+          {categories.map((category)=>{
+              return (
+                
+                      <li
+                      key = {category.id}
+                      className={`px-4 py-2 rounded cursor-pointer 
+                        ${category.id === categoryId 
+                          ? 'text-green-800 font-semibold' 
+                          : 'text-gray-600 hover:text-green-700 hover:font-semibold'}`}
+                      onClick={()=>clickCategory(category.id)}
+                     
+                      >{category.name}</li>
+              
+              )
+          })}
+      </ul>
     </div>
   
 
     <div className='btns'>
-      <button onClick={deleteBoards}>삭제</button>
-      <button onClick={gotoWrite}>글쓰기</button>
+      <button className="bg-[rgb(219,230,222)] hover:bg-[rgb(155, 165, 158)] text-green-800 font-medium py-2 px-4 rounded-lg shadow-sm" onClick={deleteBoards}>삭제</button>
+      <button  className="bg-[rgb(219,230,222)] hover:bg-[rgb(219,230,222)] text-green-800 font-medium py-2 px-4 rounded-lg shadow-sm" onClick={gotoWrite}>글쓰기</button>
     </div>
     </header>
-    <table className='board-table'>
-      <thead>
+    <table className='min-w-full divide-y divide-gray-200'>
+      <thead className='bg-gray-100'>
         <tr>
-          <th>선택</th>
-          <th>id</th>
-          <th>제목</th>
-          <th>등록일</th>
+          <th className='px-6 py-3 text-left text-[13px] front-mediu text-gray-500 tracking-wider'>선택</th>
+          <th className="px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">id</th>
+          <th className="px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">제목</th>
+          <th className="px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">작성자</th>
+          <th className="px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">등록일</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="bg-white divide-y divide-gray-200">
         {boards.map((board)=>
         <tr key={board.id}>
-           <td>
+           <td className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900">
             <input 
             type='checkbox'
             checked={board.isChecked}
@@ -167,9 +177,9 @@ return(
             
             />
             </td>
-            <td onClick={()=>gotoDetail(board.id)}>{board.id}</td>
-            <td onClick={()=>gotoDetail(board.id)}>{board.title}</td>
-            <td onClick={()=>gotoDetail(board.id)}>{board.content}</td>
+            <td className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900" onClick={()=>gotoDetail(board.id)}>{board.id}</td>
+            <td className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900" onClick={()=>gotoDetail(board.id)}>{board.title}</td>
+            <td className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900" onClick={()=>gotoDetail(board.id)}>{board.content}</td>
           </tr>
         )}
     
