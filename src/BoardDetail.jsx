@@ -111,6 +111,7 @@ function BoardDetail() {
             <button onClick={editContent}>수정</button>
           )}
           <button onClick={() => navigate("/boards")}>목록으로 가기</button>
+
         </div>
 
         {comments ? (

@@ -20,23 +20,10 @@ function CategoriesDetail() {
   const [board, setBoard] = useState([]);
   const [tempComment, setTempComment] = useState("");
   const [comments, setComments] = useState([]);
-  const [user, setUser] = useState();
-
+  const [detailIsEdit, setDetailIsEdit] = useState(false);
+  const [tempDetail, setTempDetail] = useState("");
   const { categoryId } = useParams();
   const { boardId } = useParams();
-
-  function getMe() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("user", user);
-        const uid = user.uid;
-        setUser(uid);
-      } else {
-        setUser("");
-      }
-    });
-  }
 
   async function getBoard() {
     const docRef = doc(db, "category", categoryId, "board", boardId);
@@ -47,17 +34,12 @@ function CategoriesDetail() {
       const data = docSnap.data();
       const formatBoard = { id, ...data };
 
-      // for (const newBoard of newBoards) {
-      //   if (newBoard.uid) {
-      //     const userRef = doc(db, "users", newBoard.uid);
-      //     const userSnap = await getDoc(userRef);
-      //     if (userSnap.exists()) {
-      //       newBoard.user = { ...userSnap.data() };
-      //     }
-      //   }
-
-      //   console.log("newBoard:", newBoard);
-      // }
+      //board는 set이 안되어있을 가능성.
+      const userRef = doc(db, "users", formatBoard.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        formatBoard.user = { ...userSnap.data() };
+      }
 
       setBoard(formatBoard);
     }
@@ -66,6 +48,17 @@ function CategoriesDetail() {
   function changeComment(e) {
     setTempComment(e.target.value);
   }
+
+  function changeDetail(e) {
+    setTempDetail(e.target.value);
+  }
+
+  function detailEdit() {
+    setDetailIsEdit(true);
+    setTempDetail(board.contents);
+  }
+
+  function detailDelete() {}
 
   async function loadComment() {
     const q = query(
@@ -110,7 +103,6 @@ function CategoriesDetail() {
   }
 
   useEffect(() => {
-    getMe();
     getBoard();
     loadComment();
   }, []);
@@ -166,15 +158,50 @@ function CategoriesDetail() {
   }
 
   return (
-    <div className="board-detail">
+    <div className="board-detail w-full max-w-3xl mx-auto px-4 py-6">
       <div key={board.id}></div>
-      <div className="board-title">{board.title}</div>
-      <div className="board-contents">{board.content}</div>
-      <div className="board-contents">{user}</div>
-
-      <div className="btns">
-        <button onClick={() => navigate(`/categories`)}>목록으로 가기</button>
+      <div className="flex justify-start-title pt-2 pl-10">{board.title}</div>
+      <div className="border-t border-gray-300 my-4 w-full"></div>
+      <div className="flex justify-end pt-5 pr-10 text-[14px]">
+        {board.user?.name}
       </div>
+      {detailIsEdit ? (
+        <input
+          className="border-1 rounded-md "
+          type="text"
+          value={tempDetail}
+          onChange={changeDetail}
+        />
+      ) : (
+        <div className="flex justify-start pl-10 pt-10 pb-10">
+          {board.contents}
+        </div>
+      )}
+      <div className="flex">
+        <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
+          <button
+            className="hover:font-medium cursor-pointer"
+            onClick={detailEdit}
+          >
+            수정
+          </button>
+          <button
+            className="hover:font-medium cursor-pointer"
+            onClick={detailDelete}
+          >
+            삭제
+          </button>
+        </div>
+        <div className="flex ml-auto justify-end mr-10 mb-2">
+          <button
+            className="text-[15px] cursor-pointer hover:font-medium"
+            onClick={() => navigate(`/categories`)}
+          >
+            목록으로 가기
+          </button>
+        </div>
+      </div>
+      <div className="border-t border-gray-300 my-4 w-[90%] mx-auto"></div>
 
       {comments.map((comment, index) =>
         comment.isEdit ? (
@@ -188,18 +215,46 @@ function CategoriesDetail() {
           </>
         ) : (
           <>
-            <p key={comment.id}>
-              {comment.content}
-              <button onClick={() => deleteComment(comment.id)}>삭제</button>
-              <button onClick={() => editComment(comment.id)}>수정</button>
-            </p>
+            <div
+              className="flex justify-center items-center w-full"
+              key={comment.id}
+            >
+              <div className="px-4 py-2 flex items-center w-130 bg-[rgb(236,236,236)] min-h-8 rounded-md">
+                <div className="text-[14px] mr-2 ">{board.user?.name}</div>
+
+                {comment.content}
+              </div>
+
+              <button
+                className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
+                onClick={() => deleteComment(comment.id)}
+              >
+                삭제
+              </button>
+              <button
+                className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
+                onClick={() => editComment(comment.id)}
+              >
+                수정
+              </button>
+            </div>
           </>
         )
       )}
 
-      <div>
-        <input type="text" value={tempComment} onChange={changeComment} />
-        <button onClick={saveComment}>댓글 등록</button>
+      <div className="mt-10">
+        <input
+          className="border-gray-400 border-1 rounded-md h-8 w-[75%] mr-3"
+          type="text"
+          value={tempComment}
+          onChange={changeComment}
+        />
+        <button
+          className="h-8 w-25 rounded-md bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-gray-600"
+          onClick={saveComment}
+        >
+          댓글 등록
+        </button>
       </div>
     </div>
   );

@@ -166,7 +166,7 @@ header p {
   display: flex;
   flex-direction: column;
   width: 800px;
-  height: 600px;
+  height: auto;
   background-color: rgb(247, 247, 247);
   border-radius: 15px;
   border-color: gray;
