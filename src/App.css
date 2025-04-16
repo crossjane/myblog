@@ -8,24 +8,28 @@
 /* 초기화 코드 */
 body {
   line-height: 1;
-  font-family: 'Noto Sans KR', sans-serif; 
-  color:rgb(74, 74, 74)
+  font-family: "Noto Sans KR", sans-serif;
+  color: rgb(74, 74, 74);
 }
-ol, ul {
+ol,
+ul {
   list-style: none;
-  padding:0;
+  padding: 0;
 }
 
-li{
+li {
   list-style-type: none;
 }
 
-blockquote, q {
+blockquote,
+q {
   quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
   content: none;
 }
 table {
@@ -39,15 +43,15 @@ table {
   align-items: center;
 }
 
-.contents-list{
- border: solid 1px rgb(235, 235, 235);
- border-radius: 5px;
- padding: 8px;
- margin-right: 10px;
- width: 300px;
- display: flex;
- justify-content: left;
- box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+.contents-list {
+  border: solid 1px rgb(235, 235, 235);
+  border-radius: 5px;
+  padding: 8px;
+  margin-right: 10px;
+  width: 300px;
+  display: flex;
+  justify-content: left;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 }
 
 .btn {
@@ -58,12 +62,12 @@ table {
   font-size: 12.5px;
 }
 
-.input-container{
+.input-container {
   display: flex;
   align-items: center;
 }
 
-.edit-input{
+.edit-input {
   border: solid 1px rgb(216, 216, 216);
   border-radius: 5px;
   padding: 8px;
@@ -73,13 +77,13 @@ table {
   justify-content: left;
 }
 
-.save-input-container{
+.save-input-container {
   display: flex;
   align-items: center;
-  margin-top:30px;
+  margin-top: 30px;
 }
 
-.save-input{
+.save-input {
   border: solid 1px rgb(216, 216, 216);
   border-radius: 5px;
   padding: 8px;
@@ -89,25 +93,26 @@ table {
   justify-content: left;
 }
 
-
-
-
 /* 초기화 코드드 */
 body {
   line-height: 1;
-  font-family: 'Noto Sans KR', sans-serif; 
-  color:rgb(74, 74, 74)
+  font-family: "Noto Sans KR", sans-serif;
+  color: rgb(74, 74, 74);
 }
-ol, ul {
+ol,
+ul {
   list-style: none;
-  padding:0;
+  padding: 0;
 }
-blockquote, q {
+blockquote,
+q {
   quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
   content: none;
 }
 table {
@@ -117,49 +122,47 @@ table {
 
 /* 내부 css */
 
-
-.App{
+.App {
   display: flex;
   justify-content: center;
   margin-top: 200px;
 }
 
-header{
-display: flex;
-justify-content: center;
-align-items: center;
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.board-table{
+.board-table {
   background-color: rgb(242, 242, 242);
   border-radius: 20px;
   box-shadow: 4px 4px 10px rgba(84, 84, 84, 0.2);
-  width:600px;
+  width: 600px;
 }
 
-header p{
-  margin-right:auto;
+header p {
+  margin-right: auto;
 }
 
-.board-table th{
+.board-table th {
 }
 
-.board-table tr{
- padding: 10px;
+.board-table tr {
+  padding: 10px;
 }
 
-.btns{
+.btns {
   display: flex;
-  gap:10px;
-  margin-left:auto;
+  gap: 10px;
+  margin-left: auto;
 }
 
-
-.btns button{
-  height:30px;
+.btns button {
+  height: 30px;
 }
 
-.board-detail{
+.board-detail {
   display: flex;
   flex-direction: column;
   width: 800px;
@@ -168,76 +171,68 @@ header p{
   border-radius: 15px;
   border-color: gray;
   box-shadow: 0 0 10px rgba(82, 82, 82, 0.3);
-  
-
 }
 
-.board-title{
+.board-title {
   padding: 30px;
   border-bottom: 1px solid rgb(200, 200, 200);
-  padding-bottom: 20px
-  
-
+  padding-bottom: 20px;
 }
 
-.board-contents{
+.board-contents {
   padding: 30px;
 }
 
 .comment {
-  padding:20px 30px 20px 30px;
+  padding: 20px 30px 20px 30px;
   background-color: rgb(236, 236, 236);
   border-radius: 10px;
-  border:1px solid rgb(216, 216, 216);
+  border: 1px solid rgb(216, 216, 216);
   width: 680px;
-  align-self: center; 
-
+  align-self: center;
 }
 
-.comment-input button{
+.comment-input button {
   margin-left: 10px;
-  width:70px;
-  height:30px;
+  width: 70px;
+  height: 30px;
 }
 
-.btns{
-  padding:30px;
+.btns {
+  padding: 30px;
 }
 
-.comment-input{
+.comment-input {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   width: 100%;
   gap: 10px;
   margin-top: 15px;
-
 }
 
-.comment-input input{
+.comment-input input {
   width: 600px;
   height: 30px;
   border-radius: 5px;
-  border:solid 1px rgb(210, 210, 210);
+  border: solid 1px rgb(210, 210, 210);
 }
 
-.comment-info{
+.comment-info {
   display: flex;
   align-items: center;
-
 }
 
-.tabmenu-focused{
-
-font-weight: 600;
-margin: 15px;
+.tabmenu-focused {
+  font-weight: 600;
+  margin: 15px;
 }
 
-.tabmenu{
+.tabmenu {
   font-weight: 200;
-  margin:15px;
+  margin: 15px;
 }
 
-.tab-container{
+.tab-container {
   display: flex;
 }
