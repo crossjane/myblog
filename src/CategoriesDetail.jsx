@@ -34,7 +34,7 @@ function CategoriesDetail() {
       const data = docSnap.data();
       const formatBoard = { id, ...data };
 
-      //board는 set이 안되어있을 가능성.
+      //board는 set이 안되어있을 가능성->
       const userRef = doc(db, "users", formatBoard.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
@@ -58,7 +58,47 @@ function CategoriesDetail() {
     setTempDetail(board.contents);
   }
 
-  function detailDelete() {}
+  async function detailDelete() {
+    if (window.confirm("이 글을 정말 삭제 하시겠습니까?")) {
+      try {
+        await deleteDoc(doc(db, "category", categoryId, "board", boardId));
+        alert("삭제완료");
+        navigate("/categories");
+      } catch (error) {
+        console.log("error", error);
+        alert("글을 삭제 할 수 없습니다.");
+      }
+    } else {
+      alert("취소");
+    }
+  }
+
+  async function detailEditSave() {
+    try {
+      const docRef = doc(db, "category", categoryId, "board", boardId);
+
+      if (tempDetail.trim().length === 0) {
+        alert("게시물 내용을 작성해주세요.");
+        return;
+      }
+
+      await updateDoc(docRef, {
+        contents: tempDetail,
+      });
+
+      setBoard((prev) => ({
+        ...prev,
+        contents: tempDetail,
+      }));
+
+      setDetailIsEdit(false);
+    } catch (error) {
+      console.log("error", error);
+      alert("글을 수정할 수 없습니다.");
+    }
+
+    setTempDetail("");
+  }
 
   async function loadComment() {
     const q = query(
@@ -88,14 +128,28 @@ function CategoriesDetail() {
         "comment"
       );
 
+      if (tempComment.trim().length === 0) {
+        alert("내용을 입력해주세요.");
+        return;
+      }
+
       const newComment = {
         content: tempComment,
         createdAt: new Date(),
       };
-      await addDoc(commentRef, newComment);
-      setTempComment("");
 
-      setComments((prev) => [...prev, newComment]);
+      //saveComent()에서 댓글 등록한 후 setComment에 새 댓글을 추가할떄 댓글 id값 부재
+      const docRef = await addDoc(commentRef, newComment);
+
+      const commentWithId = {
+        id: docRef.id,
+        ...newComment,
+        isEdit: false,
+        tempComment: "",
+      };
+
+      setTempComment("");
+      setComments((prev) => [...prev, commentWithId]);
     } catch (error) {
       console.log("error", error);
       alert("댓글을 저장할 수 없습니다.");
@@ -125,11 +179,19 @@ function CategoriesDetail() {
         ? { ...comment, isEdit: true, tempComment: comment.content }
         : comment
     );
+
     setComments(editedComment);
   }
 
   async function editSaveComment(commentId) {
     try {
+      const comment = comments.find((comment) => comment.id === commentId);
+
+      if (comment.tempContent.trim().length === 0) {
+        alert("댓글 내용을 작성해주세요.");
+        return;
+      }
+
       const docRef = doc(
         db,
         "category",
@@ -140,7 +202,7 @@ function CategoriesDetail() {
         commentId
       );
       await updateDoc(docRef, {
-        content: tempComment,
+        content: comment.tempComment,
       });
     } catch (error) {
       console.log("error", error);
@@ -178,20 +240,29 @@ function CategoriesDetail() {
         </div>
       )}
       <div className="flex">
-        <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
+        {detailIsEdit ? (
           <button
             className="hover:font-medium cursor-pointer"
-            onClick={detailEdit}
+            onClick={detailEditSave}
           >
-            수정
+            수정완료
           </button>
-          <button
-            className="hover:font-medium cursor-pointer"
-            onClick={detailDelete}
-          >
-            삭제
-          </button>
-        </div>
+        ) : (
+          <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
+            <button
+              className="hover:font-medium cursor-pointer"
+              onClick={detailEdit}
+            >
+              수정
+            </button>
+            <button
+              className="hover:font-medium cursor-pointer"
+              onClick={detailDelete}
+            >
+              삭제
+            </button>
+          </div>
+        )}
         <div className="flex ml-auto justify-end mr-10 mb-2">
           <button
             className="text-[15px] cursor-pointer hover:font-medium"
@@ -220,7 +291,7 @@ function CategoriesDetail() {
               key={comment.id}
             >
               <div className="px-4 py-2 flex items-center w-130 bg-[rgb(236,236,236)] min-h-8 rounded-md">
-                <div className="text-[14px] mr-2 ">{board.user?.name}</div>
+                <div className="text-[14px] mr-2 ">{board.user?.name} :</div>
 
                 {comment.content}
               </div>
