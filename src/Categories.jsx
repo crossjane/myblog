@@ -9,6 +9,14 @@ import React, { useEffect, useState } from "react";
 import db from "./firebase";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  test,
+  testAction,
+  testSelector,
+  testSlice,
+} from "./features/count/slice";
+import Header from "./Components/Header";
 
 // 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
 // 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨
@@ -21,6 +29,7 @@ function Categories() {
   const [boards, setBoards] = useState([]);
   const [categoryId, setCategoryId] = useState();
   const [user, setUser] = useState();
+  const dispatch = useDispatch();
 
   async function loadCategories() {
     try {
@@ -90,9 +99,7 @@ function Categories() {
   }
 
   async function deleteBoards() {
-
     const deletedBoards = [];
-
 
     try {
       for (const board of boards) {
@@ -131,17 +138,6 @@ function Categories() {
     });
   }
 
-  async function logout() {
-    try {
-      const auth = getAuth();
-      const result = await signOut(auth);
-      alert("로그아웃되었습니다.");
-      navigate("/login");
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
   useEffect(() => {
     getMe();
     loadCategories();
@@ -149,12 +145,7 @@ function Categories() {
 
   return (
     <div className="board">
-      <button onClick={logout}>로그아웃</button>
-      <div className="flex justify-center items-center mb-6">
-        <b className="text-2xl text-green-800 font-semibold font-inter">
-          Jane's Life
-        </b>
-      </div>
+      <Header user={user} />
       <header>
         <div className="flex justify-center items-center mb-6">
           <ul className="flex gap-4">
@@ -200,7 +191,7 @@ function Categories() {
             <th className="w-[8%] px-6 py-3 text-left text-[13px] front-mediu text-gray-500 tracking-wider">
               선택
             </th>
-            <th className="w-[10%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
+            <th className="w-[20%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
               id
             </th>
             <th className="w-[40%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
@@ -209,7 +200,7 @@ function Categories() {
             <th className="w-[17%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
               작성자
             </th>
-            <th className="px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
+            <th className="px-6 w-[15%] py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
               등록일
             </th>
           </tr>

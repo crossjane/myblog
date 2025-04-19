@@ -24,6 +24,19 @@ function CategoriesDetail() {
   const [tempDetail, setTempDetail] = useState("");
   const { categoryId } = useParams();
   const { boardId } = useParams();
+  const [user, setUser] = useState("");
+
+  async function getMe() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUser(uid);
+      } else {
+        setUser("");
+      }
+    });
+  }
 
   async function getBoard() {
     const docRef = doc(db, "category", categoryId, "board", boardId);
@@ -108,12 +121,26 @@ function CategoriesDetail() {
     const data = await getDocs(q);
     const newComments = [];
     data.forEach((doc) => {
-      console.log(doc.data());
       const id = doc.id;
       const data = doc.data();
+
       const formatComment = { id, ...data, isEdit: false, tempComment: "" };
+
       newComments.push(formatComment);
     });
+
+    for (const newComment of newComments) {
+      console.log(newComment);
+      if (newComment.uid) {
+        console.log("!!!!!!");
+        const userRef = doc(db, "users", newComment.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          console.log("@@@@@@");
+          newComment.user = { uid: userSnap.id, ...userSnap.data() };
+        }
+      }
+    }
     setComments(newComments);
   }
 
@@ -136,6 +163,7 @@ function CategoriesDetail() {
       const newComment = {
         content: tempComment,
         createdAt: new Date(),
+        uid: user,
       };
 
       //saveComent()에서 댓글 등록한 후 setComment에 새 댓글을 추가할떄 댓글 id값 부재
@@ -157,6 +185,7 @@ function CategoriesDetail() {
   }
 
   useEffect(() => {
+    getMe();
     getBoard();
     loadComment();
   }, []);
@@ -229,7 +258,7 @@ function CategoriesDetail() {
       </div>
       {detailIsEdit ? (
         <input
-          className="border-1 rounded-md "
+          className="border-1 rounded-md"
           type="text"
           value={tempDetail}
           onChange={changeDetail}
@@ -247,7 +276,7 @@ function CategoriesDetail() {
           >
             수정완료
           </button>
-        ) : (
+        ) : user === board.uid ? (
           <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
             <button
               className="hover:font-medium cursor-pointer"
@@ -262,7 +291,7 @@ function CategoriesDetail() {
               삭제
             </button>
           </div>
-        )}
+        ) : null}
         <div className="flex ml-auto justify-end mr-10 mb-2">
           <button
             className="text-[15px] cursor-pointer hover:font-medium"
@@ -291,23 +320,27 @@ function CategoriesDetail() {
               key={comment.id}
             >
               <div className="px-4 py-2 flex items-center w-130 bg-[rgb(236,236,236)] min-h-8 rounded-md">
-                <div className="text-[14px] mr-2 ">{board.user?.name} :</div>
+                <div className="text-[14px] mr-2 ">{comment.user?.name} :</div>
 
                 {comment.content}
               </div>
 
-              <button
-                className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
-                onClick={() => deleteComment(comment.id)}
-              >
-                삭제
-              </button>
-              <button
-                className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
-                onClick={() => editComment(comment.id)}
-              >
-                수정
-              </button>
+              {comment.user && user === comment.user.uid ? (
+                <>
+                  <button
+                    className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
+                    onClick={() => deleteComment(comment.id)}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
+                    onClick={() => editComment(comment.id)}
+                  >
+                    수정
+                  </button>
+                </>
+              ) : null}
             </div>
           </>
         )
