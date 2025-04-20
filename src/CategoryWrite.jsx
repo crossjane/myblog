@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import db from "./firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Header from "./Components/Header";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
@@ -14,6 +15,7 @@ function CategoryWrite() {
   const { categoryId, boardId } = useParams();
 
   const [uid, setUid] = useState("");
+  const [user, setUser] = useState("");
 
   async function getMe() {
     const auth = getAuth();
@@ -21,6 +23,7 @@ function CategoryWrite() {
       if (user) {
         const uid = user.uid;
         setUid(uid);
+        setUser(uid);
       } else {
         alert("로그인 정보가 없습니다.");
         navigate("/login");
@@ -61,28 +64,41 @@ function CategoryWrite() {
   }, []);
 
   return (
-    uid && (
-      <div className="board-detail">
-        <div className="board-title">
-          <input
-            type="text"
-            placeholder="제목을 입력해주세요."
-            onChange={titleChange}
-            value={title}
-          />
+    <>
+      <Header user={user} />
+      {uid && (
+        <div className="flex justify-center">
+          <div className="board-detail mt-20 ">
+            <div className="board-title">
+              <input
+                className="flex focus:outline-none focus:border-none"
+                type="text"
+                placeholder="제목을 입력해주세요."
+                onChange={titleChange}
+                value={title}
+              />
+            </div>
+            <div className="board-contents min-h-100">
+              <input
+                className="flex focus:outline-none focus:border-none"
+                type="text"
+                placeholder="내용을 입력해주세요."
+                onChange={contentChange}
+                value={contents}
+              />
+            </div>
+            <div className="flex justify-center mb-7">
+              <button
+                className="h-8 w-25 rounded-md bg-[rgb(233,240,235)] text-green-700 hover:bg-[rgb(207,230,215)] cursor-pointer"
+                onClick={saveClick}
+              >
+                등록
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="board-contents">
-          <input
-            type="text"
-            placeholder="내용을 입력해주세요."
-            onChange={contentChange}
-            value={contents}
-          />
-        </div>
-
-        <button onClick={saveClick}>등록</button>
-      </div>
-    )
+      )}
+    </>
   );
 }
 

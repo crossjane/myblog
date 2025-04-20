@@ -29,7 +29,6 @@ function Categories() {
   const [boards, setBoards] = useState([]);
   const [categoryId, setCategoryId] = useState();
   const [user, setUser] = useState();
-  const dispatch = useDispatch();
 
   async function loadCategories() {
     try {
