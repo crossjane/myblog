@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import db from "./firebase";
 
 function Join() {
@@ -30,8 +30,10 @@ function Join() {
         passwords
       );
       const user = userCredential.user;
-      const userRef = doc(db, "users", user.uid);
-      setDoc(userRef, {
+
+      const userRef = collection(db, "users");
+      const ref = doc(userRef, user.uid);
+      setDoc(ref, {
         name,
         email,
       });

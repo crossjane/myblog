@@ -14,6 +14,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
+import { useSelector } from "react-redux";
+import { userSelector } from "./features/user/slice";
 
 function CategoriesDetail() {
   let navigate = useNavigate();
@@ -26,6 +28,7 @@ function CategoriesDetail() {
   const { categoryId } = useParams();
   const { boardId } = useParams();
   const [user, setUser] = useState("");
+  const { user: userState } = useSelector(userSelector.selectUser);
 
   async function getMe() {
     const auth = getAuth();
@@ -353,6 +356,8 @@ function CategoriesDetail() {
         )}
 
         <div className="mt-10">
+          {userState && <span>{userState.name}</span>}
+
           <input
             className="border-gray-400 border-1 rounded-md h-8 w-[75%] mr-3"
             type="text"
