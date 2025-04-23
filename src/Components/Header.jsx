@@ -21,7 +21,7 @@ function Header({ user }) {
     try {
       const auth = getAuth();
       const result = await signOut(auth);
-      dispatch(userAction.updateUser(null));
+      dispatch(userAction.updateUser(null))
       alert("로그아웃되었습니다.");
       navigate("/categories");
     } catch (error) {

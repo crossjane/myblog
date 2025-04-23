@@ -1,29 +1,39 @@
-import { addDoc, collection, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import "./App.css";
 import React, { useEffect, useState } from "react";
 import db from "./firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { userAction } from "./features/user/slice";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
 
+  const dispatch = useDispatch();
   let navigate = useNavigate();
 
   const { categoryId, boardId } = useParams();
 
-  const [uid, setUid] = useState("");
-  const [user, setUser] = useState("");
+  // const [uid, setUid] = useState("");
+  // const [user, setUser] = useState("");
+  // 여기서 담긴 user의 정보? 모든 user의정보?
+  const { uid, user } = useSelector(useSelector.selectUser);
 
   async function getMe() {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
-        setUid(uid);
-        setUser(uid);
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
+        if(userSnap.exists()){
+          dispatch(userAction.updateUid(uid));
+          dispatch(userAction.updateUser({uid, ...userSnap.data()}));
+        }
+        
       } else {
         alert("로그인 정보가 없습니다.");
         navigate("/login");

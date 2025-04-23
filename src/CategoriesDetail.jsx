@@ -14,11 +14,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
-import { useSelector } from "react-redux";
-import { userSelector } from "./features/user/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { userAction, userSelector } from "./features/user/slice";
 
 function CategoriesDetail() {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [board, setBoard] = useState([]);
   const [tempComment, setTempComment] = useState("");
@@ -27,17 +28,22 @@ function CategoriesDetail() {
   const [tempDetail, setTempDetail] = useState("");
   const { categoryId } = useParams();
   const { boardId } = useParams();
-  const [user, setUser] = useState("");
-  const { user: userState } = useSelector(userSelector.selectUser);
+  const { user } = useSelector(userSelector.selectUser);
 
+  //getMe로 로그인 정보를 가져오고 -> 리덕스(상태)에 해당 정보를 저장->
+  // 근데 이건 getDoc? firebase에서 uid를 가져온다음에 저장해야되나?
   async function getMe() {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
-        setUser(uid);
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
+        dispatch(userAction.updateUid(uid));
+        dispatch(userAction.updateUser({ uid, ...userSnap.data() }));
       } else {
-        setUser("");
+        dispatch(userAction.updateUid(null));
+        dispatch(userAction.updateUser(null));
       }
     });
   }
@@ -220,7 +226,7 @@ function CategoriesDetail() {
     try {
       const comment = comments.find((comment) => comment.id === commentId);
 
-      if (comment.tempContent.trim().length === 0) {
+      if (comment.tempComment.trim().length === 0) {
         alert("댓글 내용을 작성해주세요.");
         return;
       }
@@ -254,7 +260,7 @@ function CategoriesDetail() {
 
   return (
     <>
-      <Header user={user} />
+      <Header />
 
       <div className="board-detail w-full max-w-3xl mt-20 mx-auto px-4 py-6">
         <div key={board.id}></div>
@@ -356,7 +362,7 @@ function CategoriesDetail() {
         )}
 
         <div className="mt-10">
-          {userState && <span>{userState.name}</span>}
+          {user && <span>{user.name}</span>}
 
           <input
             className="border-gray-400 border-1 rounded-md h-8 w-[75%] mr-3"

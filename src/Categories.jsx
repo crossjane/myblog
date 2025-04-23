@@ -8,15 +8,10 @@ import {
 import React, { useEffect, useState } from "react";
 import db from "./firebase";
 import { useNavigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged} from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  test,
-  testAction,
-  testSelector,
-  testSlice,
-} from "./features/count/slice";
 import Header from "./Components/Header";
+import { userAction, userSelector } from "./features/user/slice";
 
 // 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
 // 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨
@@ -24,11 +19,12 @@ import Header from "./Components/Header";
 
 function Categories() {
   let navigate = useNavigate();
+  let dispatch = useDispatch();
 
   const [categories, setCategories] = useState([]);
   const [boards, setBoards] = useState([]);
   const [categoryId, setCategoryId] = useState();
-  const [user, setUser] = useState();
+  const { user } = useSelector(userSelector);
 
   async function loadCategories() {
     try {
@@ -126,13 +122,18 @@ function Categories() {
 
   function getMe() {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log(user);
         const uid = user.uid;
-        setUser(uid);
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          dispatch(userAction.updateUid(uid));
+          dispatch(userAction.updateUser({ uid, ...userSnap.data() }));
+        }
       } else {
-        setUser("");
+        dispatch(userAction.updateUid(null));
+        dispatch(userAction.updateUser(null));
       }
     });
   }
