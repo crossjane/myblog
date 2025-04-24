@@ -40,7 +40,10 @@ export const userReducer = userSlice.reducer;
 export const userAction = userSlice.actions;
 
 export const userSelector = {
-  selectUser: (state) => selectUserState(state[user]),
+  selectUser: (state) => {
+    console.log("state", state);
+    return selectUserState(state[user]);
+  },
 };
 
 //state가 여기서 정확히 뭘 받는지? 전체state? collection전부?

@@ -28,7 +28,13 @@ function CategoriesDetail() {
   const [tempDetail, setTempDetail] = useState("");
   const { categoryId } = useParams();
   const { boardId } = useParams();
-  const { user } = useSelector(userSelector.selectUser);
+  const { uid, user } = useSelector(userSelector.selectUser);
+
+  useEffect(() => {
+    getMe();
+    getBoard();
+    loadComment();
+  }, []);
 
   //getMe로 로그인 정보를 가져오고 -> 리덕스(상태)에 해당 정보를 저장->
   // 근데 이건 getDoc? firebase에서 uid를 가져온다음에 저장해야되나?
@@ -140,7 +146,9 @@ function CategoriesDetail() {
     });
 
     for (const newComment of newComments) {
-      console.log(newComment);
+      console.log("newComment", newComment);
+      console.log("newComment.uid", newComment.uid);
+
       if (newComment.uid) {
         console.log("!!!!!!");
         const userRef = doc(db, "users", newComment.uid);
@@ -148,6 +156,7 @@ function CategoriesDetail() {
         if (userSnap.exists()) {
           console.log("@@@@@@");
           newComment.user = { uid: userSnap.id, ...userSnap.data() };
+          console.log("newComment.user", newComment.user);
         }
       }
     }
@@ -173,7 +182,7 @@ function CategoriesDetail() {
       const newComment = {
         content: tempComment,
         createdAt: new Date(),
-        uid: user,
+        uid: user.uid,
       };
 
       //saveComent()에서 댓글 등록한 후 setComment에 새 댓글을 추가할떄 댓글 id값 부재
@@ -193,12 +202,6 @@ function CategoriesDetail() {
       alert("댓글을 저장할 수 없습니다.");
     }
   }
-
-  useEffect(() => {
-    getMe();
-    getBoard();
-    loadComment();
-  }, []);
 
   async function deleteComment(commentId) {
     try {
@@ -289,7 +292,7 @@ function CategoriesDetail() {
             >
               수정완료
             </button>
-          ) : user === board.uid ? (
+          ) : user && user.uid === board.uid ? (
             <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
               <button
                 className="hover:font-medium cursor-pointer"

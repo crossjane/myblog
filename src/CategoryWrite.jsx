@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { userAction } from "./features/user/slice";
+import { userAction, userSelector } from "./features/user/slice";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
@@ -20,7 +20,7 @@ function CategoryWrite() {
   // const [uid, setUid] = useState("");
   // const [user, setUser] = useState("");
   // 여기서 담긴 user의 정보? 모든 user의정보?
-  const { uid, user } = useSelector(useSelector.selectUser);
+  const { uid, user } = useSelector(userSelector.selectUser);
 
   async function getMe() {
     const auth = getAuth();

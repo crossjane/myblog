@@ -10,7 +10,7 @@ import db from "../firebase";
 function Header({ user }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { number, number2 } = useSelector(testSelector.selectTest2);
+
   const { user: userState } = useSelector(userSelector.selectUser);
 
   function login() {
@@ -21,7 +21,7 @@ function Header({ user }) {
     try {
       const auth = getAuth();
       const result = await signOut(auth);
-      dispatch(userAction.updateUser(null))
+      dispatch(userAction.updateUser(null));
       alert("로그아웃되었습니다.");
       navigate("/categories");
     } catch (error) {
@@ -57,7 +57,7 @@ function Header({ user }) {
   return (
     <>
       <div className="w-full flex justify-end px-6 py-2">
-        {user ? (
+        {userState ? (
           <button
             className="text-m text-gray-600 hover:text-green-800"
             onClick={logout}
@@ -68,16 +68,15 @@ function Header({ user }) {
           <button onClick={login}>로그인</button>
         )}
       </div>
-      <div className="flex justify-center items-center mb-6">
-        <b className="text-2xl text-green-800 font-semibold font-inter">
+      <div className="flex flex-col justify-center items-center mb-6">
+        <b
+          onClick={() => navigate("/categories")}
+          className="text-2xl mb-3 text-green-800 font-semibold font-inter cursor-pointer"
+        >
           Jane's Life
         </b>
         {userState && <p>{userState.name}님 환영합니다.</p>}
       </div>
-      <p>
-        {number}{" "}
-        <button onClick={() => dispatch(testAction.sumCount())}>더하기</button>
-      </p>
     </>
   );
 }

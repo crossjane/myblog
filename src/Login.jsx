@@ -30,7 +30,7 @@ function Login() {
       );
       const user = userCredential.user;
       console.log(user);
-      navigate("/categories");
+      navigate("/categories?tab=OfLdJf7dkBswF0756yBw");
     } catch (error) {
       const code = error.code;
       if (code === "auth/invalid-email") {
