@@ -21,7 +21,7 @@ function CategoriesDetail() {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [board, setBoard] = useState([]);
+  const [board, setBoard] = useState({});
   const [tempComment, setTempComment] = useState("");
   const [comments, setComments] = useState([]);
   const [detailIsEdit, setDetailIsEdit] = useState(false);
@@ -29,12 +29,6 @@ function CategoriesDetail() {
   const { categoryId } = useParams();
   const { boardId } = useParams();
   const { uid, user } = useSelector(userSelector.selectUser);
-
-  useEffect(() => {
-    getMe();
-    getBoard();
-    loadComment();
-  }, []);
 
   //getMe로 로그인 정보를 가져오고 -> 리덕스(상태)에 해당 정보를 저장->
   // 근데 이건 getDoc? firebase에서 uid를 가져온다음에 저장해야되나?
@@ -260,6 +254,12 @@ function CategoriesDetail() {
     copyComments[index].tempComment = e.target.value;
     setComments(copyComments);
   }
+
+  useEffect(() => {
+    getMe();
+    getBoard();
+    loadComment();
+  }, []);
 
   return (
     <>

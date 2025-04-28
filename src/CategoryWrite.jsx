@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
@@ -29,11 +30,10 @@ function CategoryWrite() {
         const uid = user.uid;
         const userRef = doc(db, "users", uid);
         const userSnap = await getDoc(userRef);
-        if(userSnap.exists()){
+        if (userSnap.exists()) {
           dispatch(userAction.updateUid(uid));
-          dispatch(userAction.updateUser({uid, ...userSnap.data()}));
+          dispatch(userAction.updateUser({ uid, ...userSnap.data() }));
         }
-        
       } else {
         alert("로그인 정보가 없습니다.");
         navigate("/login");
@@ -78,31 +78,49 @@ function CategoryWrite() {
       <Header user={user} />
       {uid && (
         <div className="flex justify-center">
-          <div className="board-detail mt-20 ">
-            <div className="board-title">
-              <input
-                className="flex focus:outline-none focus:border-none"
-                type="text"
-                placeholder="제목을 입력해주세요."
-                onChange={titleChange}
-                value={title}
-              />
-            </div>
-            <div className="board-contents min-h-100">
-              <input
-                className="flex focus:outline-none focus:border-none"
-                type="text"
-                placeholder="내용을 입력해주세요."
-                onChange={contentChange}
-                value={contents}
-              />
+          <div className="container-board">
+            <Menu>
+              <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">
+                최신순 ▼
+              </MenuButton>
+              <MenuItems anchor="bottom">
+                <MenuItem className="text-[#5F7D7D] text-[13px]">
+                  <a
+                    className="cursor-pointer focus:outline-none focus-visible:outline-none block data-focus:bg-[#e6ecec] py-1 px-4 rounded "
+                    // href="/settings"
+                  >
+                    인기순
+                  </a>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+            <div className="board-detail mt-20 ">
+              <div className="board-title">
+                <input
+                  className="flex focus:outline-none focus:border-none"
+                  type="text"
+                  placeholder="제목을 입력해주세요."
+                  onChange={titleChange}
+                  value={title}
+                />
+                <div className="board-title-line"></div>
+              </div>
+              <div className="board-contents min-h-100">
+                <input
+                  className="flex focus:outline-none focus:border-none"
+                  type="text"
+                  placeholder="내용을 입력해주세요."
+                  onChange={contentChange}
+                  value={contents}
+                />
+              </div>
             </div>
             <div className="flex justify-center mb-7">
               <button
-                className="h-8 w-25 rounded-md bg-[rgb(233,240,235)] text-green-700 hover:bg-[rgb(207,230,215)] cursor-pointer"
+                className="text-[14px] h-9 w-40 mt-10 rounded-4xl bg-[#5F7D7D] text-white hover:bg-[#435b5b] cursor-pointer"
                 onClick={saveClick}
               >
-                등록
+                등록 하기
               </button>
             </div>
           </div>
