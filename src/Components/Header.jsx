@@ -57,25 +57,44 @@ function Header({ user }) {
   return (
     <>
       <div className="w-full flex justify-end px-6 py-2">
+        {userState && (
+          <p className="mr-8 leading-relaxed">{userState.name}님</p>
+        )}
+
+        <button
+          className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 pb-1 mr-4 cursor-pointer hover:bg-[#e6ecec]"
+          style={{ fontFamily: '"Josefin Slab"' }}
+        >
+          my page
+        </button>
         {userState ? (
           <button
-            className="text-m text-gray-600 hover:text-green-800"
+            className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 cursor-pointer hover:bg-[#e6ecec]"
+            style={{ fontFamily: '"Josefin Slab"' }}
             onClick={logout}
           >
-            로그아웃
+            logout
           </button>
         ) : (
-          <button onClick={login}>로그인</button>
+          <button
+            className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 pb-1 cursor-pointer hover:bg-[#e6ecec]"
+            style={{ fontFamily: '"Josefin Slab"' }}
+            onClick={login}
+          >
+            login
+          </button>
         )}
       </div>
       <div className="flex flex-col justify-center items-center mb-6">
         <b
           onClick={() => navigate("/categories")}
-          className="text-2xl mb-3 text-green-800 font-semibold font-inter cursor-pointer"
+          className="font-medium tracking-wide text-[50px] mb-7 text-[#5F7D7D] cursor-pointer mt-20"
+          style={{ fontFamily: '"Josefin Slab", serif' }}
         >
-          Jane's Life
+          Jane's Blog
         </b>
-        {userState && <p>{userState.name}님 환영합니다.</p>}
+        Jane의 개인 블로그입니다.
+        <img src="../../public/line_keyboard.png" className="w-80 h-auto"></img>
       </div>
     </>
   );

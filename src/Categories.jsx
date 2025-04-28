@@ -19,6 +19,7 @@ import Header from "./Components/Header";
 import { userAction, userSelector } from "./features/user/slice";
 import { categoryAction, categorySelector } from "./features/category/slice";
 import { boardAction, boardSelector } from "./features/board/slice";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 // 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
 // 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨
@@ -185,20 +186,43 @@ function Categories() {
 
         {user && (
           <div className="btns">
-            <button
-              className="bg-[rgb(219,230,222)] hover:bg-[rgb(155, 165, 158)] text-green-800 font-medium py-2 px-4 rounded-lg shadow-sm"
-              onClick={deleteBoards}
-            >
-              삭제
-            </button>
-            <button
-              className="bg-[rgb(219,230,222)] hover:bg-[rgb(219,230,222)] text-green-800 font-medium py-2 px-4 rounded-lg shadow-sm"
-              onClick={gotoWrite}
-            >
-              글쓰기
-            </button>
+            <div className="relative group">
+              <button
+                className="w-7 h-auto cursor-pointer"
+                onClick={deleteBoards}
+              >
+                <img src="../public/board_delete.png" alt="글삭제"></img>
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                글삭제
+              </div>
+            </div>
+            <div className="relative group">
+              <button className="w-7 h-auto cursor-pointer" onClick={gotoWrite}>
+                <img src="../public/board_wirte.svg" alt="글쓰기기"></img>
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                글쓰기
+              </div>
+            </div>
           </div>
         )}
+
+        <Menu>
+          <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">
+            최신순 ▼
+          </MenuButton>
+          <MenuItems anchor="bottom">
+            <MenuItem className="text-[#5F7D7D] text-[13px]">
+              <a
+                className="cursor-pointer focus:outline-none focus-visible:outline-none block data-focus:bg-[#e6ecec] py-1 px-4 rounded "
+                // href="/settings"
+              >
+                인기순
+              </a>
+            </MenuItem>
+          </MenuItems>
+        </Menu>
       </header>
 
       {boardLoading ? (
