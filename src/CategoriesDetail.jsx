@@ -48,6 +48,7 @@ function CategoriesDetail() {
     });
   }
 
+  // 카테고리 아이디가 안오는것같음..왜?
   async function getBoard() {
     const docRef = doc(db, "category", categoryId, "board", boardId);
     const docSnap = await getDoc(docRef);
@@ -57,14 +58,20 @@ function CategoriesDetail() {
       const data = docSnap.data();
       const formatBoard = { id, ...data };
 
+      console.log("doformatBoard", formatBoard);
+
       //board는 set이 안되어있을 가능성->
       const userRef = doc(db, "users", formatBoard.uid);
       const userSnap = await getDoc(userRef);
+
+      console.log("userSnap", userSnap);
+
       if (userSnap.exists()) {
         formatBoard.user = { ...userSnap.data() };
       }
 
       setBoard(formatBoard);
+      console.log("board", board);
     }
   }
 
@@ -265,116 +272,170 @@ function CategoriesDetail() {
     <>
       <Header />
 
-      <div className="board-detail w-full max-w-3xl mt-20 mx-auto px-4 py-6">
-        <div key={board.id}></div>
-        <div className="flex justify-start-title pt-2 pl-10">{board.title}</div>
-        <div className="border-t border-gray-300 my-4 w-full"></div>
-        <div className="flex justify-end pt-5 pr-10 text-[14px]">
-          {board.user?.name}
-        </div>
-        {detailIsEdit ? (
-          <input
-            className="border-1 rounded-md"
-            type="text"
-            value={tempDetail}
-            onChange={changeDetail}
-          />
-        ) : (
-          <div className="flex justify-start pl-10 pt-10 pb-10">
-            {board.contents}
-          </div>
-        )}
-        <div className="flex">
-          {detailIsEdit ? (
-            <button
-              className="hover:font-medium cursor-pointer"
-              onClick={detailEditSave}
-            >
-              수정완료
-            </button>
-          ) : user && user.uid === board.uid ? (
-            <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
-              <button
-                className="hover:font-medium cursor-pointer"
-                onClick={detailEdit}
-              >
-                수정
-              </button>
-              <button
-                className="hover:font-medium cursor-pointer"
-                onClick={detailDelete}
-              >
-                삭제
-              </button>
+      <div className="flex flex-col bg-[#f6f6f6] shadow-xl rounded-2xl p-10 m-10">
+        {/* z컨텐츠 */}
+        <div>
+          {/* 제목  */}
+          <div className="flex flex-col pb-3 border-b border-gray-300">
+            <div>
+              <p className="text-left font-bold text-[20px] mb-4">
+                {board.title}
+              </p>
             </div>
-          ) : null}
-          <div className="flex ml-auto justify-end mr-10 mb-2">
-            <button
-              className="text-[15px] cursor-pointer hover:font-medium"
-              onClick={() => navigate(`/categories`)}
-            >
-              목록으로 가기
-            </button>
+            <div className="flex flex-row items-center">
+              <div className="flex flex-1 gap-3 items-center">
+                <span className=" text-[14px]"> {board.user?.name}이름</span>
+                <span className="text-[14px]">2025-04-29</span>
+              </div>
+              <div>
+                <img src="/empty_heart.svg" className="w-5" />
+              </div>
+            </div>
+          </div>
+
+          {/* 내용 */}
+          <div className="flex flex-col min-h-80">
+            {detailIsEdit ? (
+              <input
+                className="border-1 rounded-md"
+                type="text"
+                value={tempDetail}
+                onChange={changeDetail}
+              />
+            ) : (
+              <div className="justify-start text-left py-6">
+                {board.contents}
+              </div>
+            )}
+            <div className="flex">
+              {detailIsEdit ? (
+                <button
+                  className="hover:font-medium cursor-pointer"
+                  onClick={detailEditSave}
+                >
+                  수정완료
+                </button>
+              ) : user && user.uid === board.uid ? (
+                <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
+                  <button
+                    className="hover:font-medium cursor-pointer"
+                    onClick={detailEdit}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="hover:font-medium cursor-pointer"
+                    onClick={detailDelete}
+                  >
+                    삭제
+                  </button>
+                </div>
+              ) : null}
+              <div className="flex ml-auto justify-end mr-10 mb-2">
+                <button
+                  className="text-[15px] cursor-pointer hover:font-medium"
+                  onClick={() => navigate(`/categories`)}
+                >
+                  목록으로 가기
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="border-t border-gray-300 my-4 w-[90%] mx-auto"></div>
 
-        {comments.map((comment, index) =>
-          comment.isEdit ? (
-            <>
-              <input
-                type="text"
-                value={comment.tempComment}
-                onChange={(e) => changeEditComment(e, index)}
-              />
-              <button onClick={() => editSaveComment(comment.id)}>저장</button>
-            </>
-          ) : (
-            <>
-              <div
-                className="flex justify-center items-center w-full"
-                key={comment.id}
-              >
-                <div className="px-4 py-2 flex items-center w-130 bg-[rgb(236,236,236)] min-h-8 rounded-md">
-                  <div className="text-[14px] mr-2 ">
-                    {comment.user?.name} :
+        {/* 댓글 목록 */}
+        <div>
+          <p className="font-medium text-left text-gray-600 mb-3 ml-1">댓글</p>
+          <div className="bg-white border rounded border-gray-300 min-h-30">
+            {comments.map((comment, index) =>
+              comment.isEdit ? (
+                <>
+                  <input
+                    type="text"
+                    value={comment.tempComment}
+                    onChange={(e) => changeEditComment(e, index)}
+                  />
+                  <button onClick={() => editSaveComment(comment.id)}>
+                    저장
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div key={comment.id}>
+                    <div className="px-4 py-2 flex flex-col min-h-8 rounded-md ">
+                      <div className="text-left text-[15px] mr-2 ">
+                        <div className="mt-2">
+                          <strong className="text-gray-600 text-[13px]">
+                            {" "}
+                            {comment.user?.name}님
+                          </strong>
+                          <span className="ml-2 text-[12px] text-gray-500">
+                            2025-04-30 18:00
+                          </span>
+                        </div>
+                        <div className="flex flex-row items-center">
+                          <div className="flex flex-1">
+                            <span className="text-[13px]">
+                              <br />
+                              {comment.content}
+                            </span>
+                          </div>
+                          <div className="flex justify-end gap-2 cursor-pointer">
+                            <img src="/public/edit.svg" className="w-5"></img>
+                            <img
+                              src="/public/delete.svg"
+                              className="w-3.5"
+                            ></img>
+                            <img
+                              src="/public/empty_heart.svg"
+                              className="w-5"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-full pb-2 border-b border-gray-300 " />
+                    </div>
+
+                    {comment.user && user === comment.user.uid ? (
+                      <>
+                        <button
+                          className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
+                          onClick={() => deleteComment(comment.id)}
+                        >
+                          삭제
+                        </button>
+                        <button
+                          className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
+                          onClick={() => editComment(comment.id)}
+                        >
+                          수정
+                        </button>
+                      </>
+                    ) : null}
                   </div>
+                </>
+              )
+            )}
+          </div>
+        </div>
 
-                  {comment.content}
-                </div>
+        {/* 댓글 입력 */}
+        <div></div>
 
-                {comment.user && user === comment.user.uid ? (
-                  <>
-                    <button
-                      className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
-                      onClick={() => deleteComment(comment.id)}
-                    >
-                      삭제
-                    </button>
-                    <button
-                      className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
-                      onClick={() => editComment(comment.id)}
-                    >
-                      수정
-                    </button>
-                  </>
-                ) : null}
-              </div>
-            </>
-          )
-        )}
+        {/* 목록으로가기  */}
+        <div></div>
 
         <div className="mt-10">
-          {user && <span>{user.name}</span>}
+          {/* {user && <span>{user.name}</span>} */}
 
           <input
-            className="border-gray-400 border-1 rounded-md h-8 w-[75%] mr-3"
+            className="bg-white border-gray-300 border-1 rounded-md h-8 w-[84%] mr-3  focus:outline-none"
             type="text"
             value={tempComment}
             onChange={changeComment}
           />
           <button
-            className="h-8 w-25 rounded-md bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-gray-600"
+            className="h-8 w-25 text-[14px] rounded-md bg-[#5F7D7D] hover:bg-[#435b5b] cursor-pointer text-white"
             onClick={saveComment}
           >
             댓글 등록

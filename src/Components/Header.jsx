@@ -64,6 +64,7 @@ function Header({ user }) {
         <button
           className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 pb-1 mr-4 cursor-pointer hover:bg-[#e6ecec]"
           style={{ fontFamily: '"Josefin Slab"' }}
+          onClick={() => navigate("/mypage")}
         >
           my page
         </button>
@@ -94,7 +95,7 @@ function Header({ user }) {
           Jane's Blog
         </b>
         Jane의 개인 블로그입니다.
-        <img src="../../public/line_keyboard.png" className="w-80 h-auto"></img>
+        <img src="/line_keyboard.png" className="w-80 h-auto" alt={"text"} />
       </div>
     </>
   );

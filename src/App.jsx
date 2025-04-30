@@ -11,6 +11,7 @@ import Join from "./Join";
 import Login from "./Login";
 import { Provider } from "react-redux";
 import store from "./store/configureStore";
+import Mypage from "./Mypage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         />
         <Route path="join" element={<Join />} />
         <Route path="login" element={<Login />} />
+        <Route path="mypage" element={<Mypage />} />
       </Routes>
     </Provider>
   );

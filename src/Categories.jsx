@@ -120,11 +120,11 @@ function Categories() {
   }
 
   function gotoDetail(boardId) {
-    navigate(`/categories/${categoryId}/board/${boardId}`);
+    navigate(`/categories/${tab}/board/${boardId}`);
   }
 
   function gotoWrite() {
-    navigate(`/categories/${categoryId}/write`);
+    navigate(`/categories/${tab}/write`);
   }
 
   function getMe() {
@@ -160,70 +160,72 @@ function Categories() {
   }, [tab]);
 
   return (
-    <div className="board">
+    <div className="flex flex-col">
       <Header user={user} />
-      <header>
-        <div className="flex justify-center items-center mb-6">
-          <ul className="flex gap-4">
-            {categories.map((category) => {
-              return (
-                <li
-                  key={category.id}
-                  className={`px-4 py-2 rounded cursor-pointer 
+      <nav className="flex flex-row items-center mb-6">
+        <ul className="flex flex-row items-center gap-4 flex-1">
+          {categories.map((category) => {
+            return (
+              <li
+                key={category.id}
+                className={`px-4 py-2 rounded cursor-pointer 
                         ${
                           category.id === tab
                             ? "text-green-800 font-semibold"
                             : "text-gray-600 hover:text-green-700 hover:font-semibold"
                         }`}
-                  onClick={() => navigate(`/categories?tab=${category.id}`)}
+                onClick={() => navigate(`/categories?tab=${category.id}`)}
+              >
+                {category.name}
+              </li>
+            );
+          })}
+        </ul>
+        <div className="flex flex-row items-center gap-2">
+          {user && (
+            <>
+              <div className="relative group">
+                <button
+                  className="w-7 h-auto cursor-pointer"
+                  onClick={deleteBoards}
                 >
-                  {category.name}
-                </li>
-              );
-            })}
-          </ul>
+                  <img src="/board_delete.png" alt="글삭제"></img>
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                  글삭제
+                </div>
+              </div>
+              <div className="relative group">
+                <button
+                  className="w-7 h-auto cursor-pointer"
+                  onClick={gotoWrite}
+                >
+                  <img src="/board_wirte.svg" alt="글쓰기기"></img>
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                  글쓰기
+                </div>
+              </div>
+            </>
+          )}
+
+          <Menu>
+            <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">
+              최신순 ▼
+            </MenuButton>
+            <MenuItems anchor="bottom">
+              <MenuItem className="text-[#5F7D7D] text-[13px]">
+                <a
+                  className="cursor-pointer focus:outline-none focus-visible:outline-none block data-focus:bg-[#e6ecec] py-1 px-4 rounded "
+                  // href="/settings"
+                >
+                  인기순
+                </a>
+              </MenuItem>
+            </MenuItems>
+          </Menu>
         </div>
-
-        {user && (
-          <div className="btns">
-            <div className="relative group">
-              <button
-                className="w-7 h-auto cursor-pointer"
-                onClick={deleteBoards}
-              >
-                <img src="../public/board_delete.png" alt="글삭제"></img>
-              </button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
-                글삭제
-              </div>
-            </div>
-            <div className="relative group">
-              <button className="w-7 h-auto cursor-pointer" onClick={gotoWrite}>
-                <img src="../public/board_wirte.svg" alt="글쓰기기"></img>
-              </button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
-                글쓰기
-              </div>
-            </div>
-          </div>
-        )}
-
-        <Menu>
-          <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">
-            최신순 ▼
-          </MenuButton>
-          <MenuItems anchor="bottom">
-            <MenuItem className="text-[#5F7D7D] text-[13px]">
-              <a
-                className="cursor-pointer focus:outline-none focus-visible:outline-none block data-focus:bg-[#e6ecec] py-1 px-4 rounded "
-                // href="/settings"
-              >
-                인기순
-              </a>
-            </MenuItem>
-          </MenuItems>
-        </Menu>
-      </header>
+      </nav>
 
       {boardLoading ? (
         <div role="status">
@@ -246,58 +248,37 @@ function Categories() {
           <span class="sr-only">Loading...</span>
         </div>
       ) : (
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="w-[8%] px-6 py-3 text-left text-[13px] front-mediu text-gray-500 tracking-wider">
-                선택
-              </th>
-              <th className="w-[20%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
-                id
-              </th>
-              <th className="w-[40%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
-                제목
-              </th>
-              <th className="w-[17%] px-6 py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
-                작성자
-              </th>
-              <th className="px-6 w-[15%] py-3 text-left text-[13px] font-medium text-gray-500 tracking-wider">
-                등록일
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {boards.map((board) => (
-              <tr key={board.id}>
-                <td className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900">
-                  <input
-                    type="checkbox"
-                    checked={board.isChecked}
-                    onChange={(e) => changeCheckbox(e, board.id)}
-                  />
-                </td>
-                <td
-                  className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900"
-                  onClick={() => gotoDetail(board.id)}
-                >
-                  {board.id}
-                </td>
-                <td
-                  className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900"
-                  onClick={() => gotoDetail(board.id)}
-                >
+        <div className="flex flex-col">
+          {boards.map((board) => (
+            <div
+              key={board.id}
+              className="flex flex-col border-b border-gray-300 py-4"
+              onClick={() => gotoDetail(board.id)}
+            >
+              <div className="flex flex-row items-center mb-4">
+                <h2 className="flex mr-3 font-medium text-[22px] text-gray-600">
                   {board.title}
-                </td>
-                <td
-                  className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-900"
-                  onClick={() => gotoDetail(board.id)}
-                >
-                  {board.user?.name}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </h2>
+                <span className="flex text-sm text-gray-500">
+                  2025-04-28 15:00
+                </span>
+              </div>
+
+              <div className="flex flex-row mt-2 flex-wrap">
+                <div className="flex flex-1">
+                  <p className="text-gray-700 text-[15px]">
+                    {board.contents} <br />
+                    asdasda <br />
+                    sdasds
+                  </p>
+                </div>
+                <div className="flex items-end">
+                  <img src="/empty_heart.svg" alt="빈하트" className="w-5" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
