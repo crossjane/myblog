@@ -58,7 +58,9 @@ function Header({ user }) {
     <>
       <div className="w-full flex justify-end px-6 py-2">
         {userState && (
-          <p className="mr-8 leading-relaxed">{userState.name}님</p>
+          <p className="mr-8 leading-relaxed text-[15px]">
+            {userState.name}님 환영합니다.
+          </p>
         )}
 
         <button

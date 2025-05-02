@@ -272,7 +272,7 @@ function CategoriesDetail() {
     <>
       <Header />
 
-      <div className="flex flex-col bg-[#f6f6f6] shadow-xl rounded-2xl p-10 m-10">
+      <div className="flex flex-col bg-[#f6f6f6] shadow-xl rounded-2xl p-10 m-25">
         {/* z컨텐츠 */}
         <div>
           {/* 제목  */}
@@ -288,7 +288,7 @@ function CategoriesDetail() {
                 <span className="text-[14px]">2025-04-29</span>
               </div>
               <div>
-                <img src="/empty_heart.svg" className="w-5" />
+                <img src="/empty_heart.svg" className="w-5 cursor-pointer" />
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ function CategoriesDetail() {
                 onChange={changeDetail}
               />
             ) : (
-              <div className="justify-start text-left py-6">
+              <div className="justify-start text-left py-6 text-[14px]">
                 {board.contents}
               </div>
             )}
@@ -346,7 +346,7 @@ function CategoriesDetail() {
         {/* 댓글 목록 */}
         <div>
           <p className="font-medium text-left text-gray-600 mb-3 ml-1">댓글</p>
-          <div className="bg-white border rounded border-gray-300 min-h-30">
+          <div className="bg-white border rounded border-gray-300 min-h-30 ">
             {comments.map((comment, index) =>
               comment.isEdit ? (
                 <>
@@ -375,7 +375,7 @@ function CategoriesDetail() {
                         </div>
                         <div className="flex flex-row items-center">
                           <div className="flex flex-1">
-                            <span className="text-[13px]">
+                            <span className="text-[13px] ">
                               <br />
                               {comment.content}
                             </span>
@@ -425,11 +425,11 @@ function CategoriesDetail() {
         {/* 목록으로가기  */}
         <div></div>
 
-        <div className="mt-10">
+        <div className="mt-5">
           {/* {user && <span>{user.name}</span>} */}
 
           <input
-            className="bg-white border-gray-300 border-1 rounded-md h-8 w-[84%] mr-3  focus:outline-none"
+            className="bg-white border-gray-300 border-1 focus:px-2 rounded-md h-8 w-[88%] mr-3  focus:outline-none"
             type="text"
             value={tempComment}
             onChange={changeComment}
