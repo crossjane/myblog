@@ -114,6 +114,8 @@ function CategoryWrite() {
                   value={contents}
                 />
               </div>
+              <div>첨부파일 등록</div>
+              <button className="bg-gray-200 mb-5">+</button>
             </div>
             <div className="flex justify-center mb-7">
               <button

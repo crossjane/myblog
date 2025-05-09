@@ -10,6 +10,7 @@ import {
   orderBy,
   query,
   deleteDoc,
+  where,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -28,7 +29,7 @@ function CategoriesDetail() {
   const [tempDetail, setTempDetail] = useState("");
   const { categoryId } = useParams();
   const { boardId } = useParams();
-  const { uid, user } = useSelector(userSelector.selectUser);
+  const { user } = useSelector(userSelector.selectUser);
 
   //getMe로 로그인 정보를 가져오고 -> 리덕스(상태)에 해당 정보를 저장->
   // 근데 이건 getDoc? firebase에서 uid를 가져온다음에 저장해야되나?
@@ -70,8 +71,37 @@ function CategoriesDetail() {
         formatBoard.user = { ...userSnap.data() };
       }
 
+      if (user) {
+        console.log("user!!!:", user);
+        formatBoard.likeId = "";
+
+        const q = query(
+          collection(db, "category", categoryId, "board", boardId, "like"),
+          where("uid", "==", user.uid)
+        );
+        const data = await getDocs(q);
+        data.forEach((doc) => {
+          formatBoard.likeId = doc.id;
+          return;
+        });
+      }
+
+      if (user) {
+        formatBoard.bookmarkId = "";
+
+        const q = query(
+          collection(db, "category", categoryId, "board", boardId, "bookmark"),
+          where("uid", "==", user.uid)
+        );
+        const data = await getDocs(q);
+        data.forEach((doc) => {
+          formatBoard.bookmarkId = doc.id;
+          return;
+        });
+      }
+
       setBoard(formatBoard);
-      console.log("board", board);
+      console.log("board!!!", board);
     }
   }
 
@@ -100,6 +130,62 @@ function CategoriesDetail() {
       }
     } else {
       alert("취소");
+    }
+  }
+
+  // async function bookmark() {
+  //   try {
+  //   } catch (error) {
+  //     console.log("bookmark error", error);
+  //     alert("북마크를 할 수 없습니다.");
+  //   }
+  // }
+
+  async function like() {
+    try {
+      if (!board.likeId) {
+        const likeRef = collection(
+          db,
+          "category",
+          categoryId,
+          "board",
+          boardId,
+          "like"
+        );
+
+        const newLike = {
+          uid: user.uid,
+        };
+
+        const docRef = await addDoc(likeRef, newLike);
+        setBoard({ ...board, likeId: docRef.id });
+        return;
+      }
+
+      await deleteDoc(
+        doc(db, "category", categoryId, "board", boardId, "like", board.likeId)
+      );
+      setBoard({ ...board, likeId: "" });
+    } catch (error) {
+      console.log("error", error);
+      alert("좋아요를 누를 수 없습니다.");
+    }
+  }
+
+  async function commentLike(commentId) {
+    //구조 , 배열 객체 구조 같은것 머릿속에 정리
+    // comments: [{
+    //   id,
+    //   ...data,
+    //   isEdit: false,
+    //   tempComment: "",
+    //   likeId: "",
+    // }]
+    try {
+      const likeRef = null;
+    } catch (error) {
+      console.log("error", error);
+      alert("좋아요를 누를 수 없습니다.");
     }
   }
 
@@ -141,7 +227,13 @@ function CategoriesDetail() {
       const id = doc.id;
       const data = doc.data();
 
-      const formatComment = { id, ...data, isEdit: false, tempComment: "" };
+      const formatComment = {
+        id,
+        ...data,
+        isEdit: false,
+        tempComment: "",
+        likeId: "",
+      };
 
       newComments.push(formatComment);
     });
@@ -160,6 +252,25 @@ function CategoriesDetail() {
           console.log("newComment.user", newComment.user);
         }
       }
+
+      const q = query(
+        collection(
+          db,
+          "category",
+          categoryId,
+          "board",
+          boardId,
+          "comment",
+          newComment.id,
+          "like"
+        ),
+        where("uid", "==", user.uid)
+      );
+
+      const result = await getDocs(q);
+      result.forEach((doc) => {
+        newComment.likeId = doc.id;
+      });
     }
     setComments(newComments);
   }
@@ -264,9 +375,12 @@ function CategoriesDetail() {
 
   useEffect(() => {
     getMe();
+  }, []);
+
+  useEffect(() => {
     getBoard();
     loadComment();
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -287,8 +401,21 @@ function CategoriesDetail() {
                 <span className=" text-[14px]"> {board.user?.name}이름</span>
                 <span className="text-[14px]">2025-04-29</span>
               </div>
-              <div>
-                <img src="/empty_heart.svg" className="w-5 cursor-pointer" />
+              <div className="flex">
+                <img
+                  src={board.likeId ? "/full_heart.svg" : "/empty_heart.svg"}
+                  onClick={like}
+                  className="w-5 cursor-pointer"
+                />
+                <img
+                  src={
+                    board.bookmarkId
+                      ? "/bookmark_full.svg"
+                      : "/bookmark_empty.svg"
+                  }
+                  onClick={bookmark}
+                  className="w-5 h-5 cursor-pointer"
+                />
               </div>
             </div>
           </div>
@@ -350,23 +477,26 @@ function CategoriesDetail() {
             {comments.map((comment, index) =>
               comment.isEdit ? (
                 <>
-                  <input
-                    type="text"
-                    value={comment.tempComment}
-                    onChange={(e) => changeEditComment(e, index)}
-                  />
-                  <button onClick={() => editSaveComment(comment.id)}>
-                    저장
-                  </button>
+                  <div key={comment.id}>
+                    <input
+                      type="text"
+                      value={comment.tempComment}
+                      onChange={(e) => changeEditComment(e, index)}
+                    />
+                    <button onClick={() => editSaveComment(comment.id)}>
+                      저장
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>
                   <div key={comment.id}>
                     <div className="px-4 py-2 flex flex-col min-h-8 rounded-md ">
-                      <div className="text-left text-[15px] mr-2 ">
+                      <div
+                        className={`text-left text-[15px] mr-2 pb-2  ${comments.length - 1 === index ? "" : "border-b border-gray-300"}`}
+                      >
                         <div className="mt-2">
                           <strong className="text-gray-600 text-[13px]">
-                            {" "}
                             {comment.user?.name}님
                           </strong>
                           <span className="ml-2 text-[12px] text-gray-500">
@@ -375,10 +505,9 @@ function CategoriesDetail() {
                         </div>
                         <div className="flex flex-row items-center">
                           <div className="flex flex-1">
-                            <span className="text-[13px] ">
-                              <br />
+                            <p className="text-[13px] pt-3 break-all">
                               {comment.content}
-                            </span>
+                            </p>
                           </div>
                           <div className="flex justify-end gap-2 cursor-pointer">
                             <img src="/public/edit.svg" className="w-5"></img>
@@ -387,13 +516,17 @@ function CategoriesDetail() {
                               className="w-3.5"
                             ></img>
                             <img
-                              src="/public/empty_heart.svg"
+                              src={
+                                comment.likeId
+                                  ? "/public/full_heart.svg"
+                                  : "/public/empty_heart.svg"
+                              }
+                              onClick={() => commentLike(comment.id)}
                               className="w-5"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="w-full pb-2 border-b border-gray-300 " />
                     </div>
 
                     {comment.user && user === comment.user.uid ? (
