@@ -220,7 +220,51 @@ function CategoriesDetail() {
     //   likeId: "",
     // }]
     try {
-      const likeRef = null;
+      const commentIndex = comments.findIndex(
+        (comment) => commentId === comment.id
+      );
+
+      const likeComment = comments[commentIndex];
+      const copyComments = [...comments];
+
+      if (!likeComment.likeId) {
+        const likeRef = collection(
+          db,
+          "category",
+          categoryId,
+          "board",
+          boardId,
+          "comment",
+          commentId,
+          "like"
+        );
+
+        const newLike = {
+          uid: user.uid,
+        };
+
+        const docRef = await addDoc(likeRef, newLike);
+
+        copyComments[commentIndex].likeId = docRef.id;
+      } else {
+        await deleteDoc(
+          doc(
+            db,
+            "category",
+            categoryId,
+            "board",
+            boardId,
+            "comment",
+            commentId,
+            "like",
+            likeComment.likeId
+          )
+        );
+
+        copyComments[commentIndex].likeId = "";
+      }
+
+      setComments(copyComments);
     } catch (error) {
       console.log("error", error);
       alert("좋아요를 누를 수 없습니다.");
@@ -271,44 +315,64 @@ function CategoriesDetail() {
         isEdit: false,
         tempComment: "",
         likeId: "",
+        bookmarkId: "",
       };
 
       newComments.push(formatComment);
     });
 
     for (const newComment of newComments) {
-      console.log("newComment", newComment);
-      console.log("newComment.uid", newComment.uid);
-
       if (newComment.uid) {
-        console.log("!!!!!!");
         const userRef = doc(db, "users", newComment.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
-          console.log("@@@@@@");
           newComment.user = { uid: userSnap.id, ...userSnap.data() };
-          console.log("newComment.user", newComment.user);
         }
       }
 
-      const q = query(
-        collection(
-          db,
-          "category",
-          categoryId,
-          "board",
-          boardId,
-          "comment",
-          newComment.id,
-          "like"
-        ),
-        where("uid", "==", user.uid)
-      );
+      // 반복된 코드 정리 가능한지...?
 
-      const result = await getDocs(q);
-      result.forEach((doc) => {
-        newComment.likeId = doc.id;
-      });
+      if (user) {
+        const q = query(
+          collection(
+            db,
+            "category",
+            categoryId,
+            "board",
+            boardId,
+            "comment",
+            newComment.id,
+            "like"
+          ),
+          where("uid", "==", user.uid)
+        );
+
+        const result = await getDocs(q);
+        result.forEach((doc) => {
+          newComment.likeId = doc.id;
+        });
+      }
+
+      if (user) {
+        const q2 = query(
+          collection(
+            db,
+            "category",
+            categoryId,
+            "board",
+            boardId,
+            "comment",
+            newComment.id,
+            "bookmark"
+          ),
+          where("uid", "==", user.uid)
+        );
+
+        const result2 = await getDocs(q2);
+        result2.forEach((doc) => {
+          newComment.bookmarkId = doc.id;
+        });
+      }
     }
     setComments(newComments);
   }
@@ -514,77 +578,70 @@ function CategoriesDetail() {
           <div className="bg-white border rounded border-gray-300 min-h-30 ">
             {comments.map((comment, index) =>
               comment.isEdit ? (
-                <>
-                  <div key={comment.id}>
-                    <input
-                      type="text"
-                      value={comment.tempComment}
-                      onChange={(e) => changeEditComment(e, index)}
-                    />
-                    <button onClick={() => editSaveComment(comment.id)}>
-                      저장
-                    </button>
-                  </div>
-                </>
+                <div key={comment.id}>
+                  <input
+                    type="text"
+                    value={comment.tempComment}
+                    onChange={(e) => changeEditComment(e, index)}
+                  />
+                  <button onClick={() => editSaveComment(comment.id)}>
+                    저장
+                  </button>
+                </div>
               ) : (
-                <>
-                  <div key={comment.id}>
-                    <div className="px-4 py-2 flex flex-col min-h-8 rounded-md ">
-                      <div
-                        className={`text-left text-[15px] mr-2 pb-2  ${comments.length - 1 === index ? "" : "border-b border-gray-300"}`}
-                      >
-                        <div className="mt-2">
-                          <strong className="text-gray-600 text-[13px]">
-                            {comment.user?.name}님
-                          </strong>
-                          <span className="ml-2 text-[12px] text-gray-500">
-                            2025-04-30 18:00
-                          </span>
+                <div key={comment.id}>
+                  <div className="px-4 py-2 flex flex-col min-h-8 rounded-md ">
+                    <div
+                      className={`text-left text-[15px] mr-2 pb-2  ${comments.length - 1 === index ? "" : "border-b border-gray-300"}`}
+                    >
+                      <div className="mt-2">
+                        <strong className="text-gray-600 text-[13px]">
+                          {comment.user?.name}님
+                        </strong>
+                        <span className="ml-2 text-[12px] text-gray-500">
+                          2025-04-30 18:00
+                        </span>
+                      </div>
+                      <div className="flex flex-row items-center">
+                        <div className="flex flex-1">
+                          <p className="text-[13px] pt-3 break-all">
+                            {comment.content}
+                          </p>
                         </div>
-                        <div className="flex flex-row items-center">
-                          <div className="flex flex-1">
-                            <p className="text-[13px] pt-3 break-all">
-                              {comment.content}
-                            </p>
-                          </div>
-                          <div className="flex justify-end gap-2 cursor-pointer">
-                            <img src="/public/edit.svg" className="w-5"></img>
-                            <img
-                              src="/public/delete.svg"
-                              className="w-3.5"
-                            ></img>
-                            <img
-                              src={
-                                comment.likeId
-                                  ? "/public/full_heart.svg"
-                                  : "/public/empty_heart.svg"
-                              }
-                              onClick={() => commentLike(comment.id)}
-                              className="w-5"
-                            />
-                          </div>
+                        <div className="flex justify-end gap-2 cursor-pointer">
+                          <img src="/public/edit.svg" className="w-5"></img>
+                          <img src="/public/delete.svg" className="w-3.5"></img>
+                          <img
+                            src={
+                              comment.likeId
+                                ? "/public/full_heart.svg"
+                                : "/public/empty_heart.svg"
+                            }
+                            onClick={() => commentLike(comment.id)}
+                            className="w-5"
+                          />
                         </div>
                       </div>
                     </div>
-
-                    {comment.user && user === comment.user.uid ? (
-                      <>
-                        <button
-                          className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
-                          onClick={() => deleteComment(comment.id)}
-                        >
-                          삭제
-                        </button>
-                        <button
-                          className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
-                          onClick={() => editComment(comment.id)}
-                        >
-                          수정
-                        </button>
-                      </>
-                    ) : null}
                   </div>
-                </>
+
+                  {comment.user && user === comment.user.uid ? (
+                    <>
+                      <button
+                        className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
+                        onClick={() => deleteComment(comment.id)}
+                      >
+                        삭제
+                      </button>
+                      <button
+                        className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
+                        onClick={() => editComment(comment.id)}
+                      >
+                        수정
+                      </button>
+                    </>
+                  ) : null}
+                </div>
               )
             )}
           </div>

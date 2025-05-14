@@ -48,6 +48,7 @@ function Categories() {
 
         newCategories.push(formatCategory);
       });
+      setTab(newCategories[0].id);
       dispatch(categoryAction.updateCategories(newCategories));
     } catch (error) {
       console.error("error", error);
