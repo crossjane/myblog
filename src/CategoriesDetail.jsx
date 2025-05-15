@@ -536,6 +536,9 @@ function CategoriesDetail() {
                 {board.contents}
               </div>
             )}
+            {board.imageUrl && (
+              <img src={board.imageUrl} className="w-[100px] h-[100px]"></img>
+            )}
             <div className="flex">
               {detailIsEdit ? (
                 <button

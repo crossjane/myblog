@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import "./App.css";
 import React, { useEffect, useRef, useState } from "react";
 import db from "./firebase";
@@ -56,7 +56,7 @@ function CategoryWrite() {
     try {
       const docRef = await addDoc(
         collection(db, "category", categoryId, "board"),
-        { title, contents, uid }
+        { title, contents, uid, imageUrl }
       );
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
