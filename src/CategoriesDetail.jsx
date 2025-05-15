@@ -612,13 +612,13 @@ function CategoriesDetail() {
                           </p>
                         </div>
                         <div className="flex justify-end gap-2 cursor-pointer">
-                          <img src="/public/edit.svg" className="w-5"></img>
-                          <img src="/public/delete.svg" className="w-3.5"></img>
+                          <img src="/edit.svg" className="w-5"></img>
+                          <img src="/delete.svg" className="w-3.5"></img>
                           <img
                             src={
                               comment.likeId
-                                ? "/public/full_heart.svg"
-                                : "/public/empty_heart.svg"
+                                ? "/full_heart.svg"
+                                : "/empty_heart.svg"
                             }
                             onClick={() => commentLike(comment.id)}
                             className="w-5"
