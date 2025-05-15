@@ -8,5 +8,6 @@ export default defineConfig({
   define: { global: "window" },
   server: {
     port: 3000,
+    allowedHosts: true,
   },
 });
