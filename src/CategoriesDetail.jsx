@@ -534,11 +534,15 @@ function CategoriesDetail() {
             ) : (
               <div className="justify-start text-left py-6 text-[14px]">
                 {board.contents}
+                {board.imageUrl && (
+                  <img
+                    src={board.imageUrl}
+                    className="w-[100px] h-[100px]"
+                  ></img>
+                )}
               </div>
             )}
-            {board.imageUrl && (
-              <img src={board.imageUrl} className="w-[100px] h-[100px]"></img>
-            )}
+
             <div className="flex">
               {detailIsEdit ? (
                 <button
