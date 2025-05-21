@@ -27,6 +27,7 @@ function CategoryWrite() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const inputRef = useRef();
   const [selectFileImg, setSelectFileImg] = useState(false);
+  // const [setUrlFiles, setUrlFiles] = useState([]);
 
   async function getMe() {
     const auth = getAuth();
@@ -75,8 +76,11 @@ function CategoryWrite() {
   }
 
   async function onChangeFile(event) {
+    // Array.form() 유사배열, 또는 이터러블 객체를 진짜 배열 Array로 변환해주는 정적 메서드드
     setUploadLoading(true);
     const file = event.target.files[0];
+    const add_files = Array.form(files); //파일에 배열 넣기.
+
     setSelectFileImg(!!file);
     const s3 = new AWS.S3({
       region: "ap-northeast-3",
@@ -151,6 +155,7 @@ function CategoryWrite() {
                 <div>첨부파일 등록</div>
                 <input
                   type="file"
+                  multiple
                   id="fileInput"
                   onChange={onChangeFile}
                   className="hidden"

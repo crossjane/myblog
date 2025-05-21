@@ -616,8 +616,21 @@ function CategoriesDetail() {
                           </p>
                         </div>
                         <div className="flex justify-end gap-2 cursor-pointer">
-                          <img src="/edit.svg" className="w-5"></img>
-                          <img src="/delete.svg" className="w-3.5"></img>
+                          {/* user는 객체.  */}
+                          {comment.user && user?.uid === comment.user.uid ? (
+                            <>
+                              <img
+                                src="/edit.svg"
+                                className="w-5"
+                                onClick={() => editComment(comment.id)}
+                              ></img>
+                              <img
+                                src="/delete.svg"
+                                className="w-3.5"
+                                onClick={() => deleteComment(comment.id)}
+                              ></img>
+                            </>
+                          ) : null}
                           <img
                             src={
                               comment.likeId
@@ -631,23 +644,6 @@ function CategoriesDetail() {
                       </div>
                     </div>
                   </div>
-
-                  {comment.user && user === comment.user.uid ? (
-                    <>
-                      <button
-                        className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg my-4 mx-2"
-                        onClick={() => deleteComment(comment.id)}
-                      >
-                        삭제
-                      </button>
-                      <button
-                        className="bg-gray-200 hover:bg-[rgb(233,240,235)] hover:text-green-700 cursor-pointer text-[14px] text-gray-600 font-medium py-2 px-4 rounded-lg"
-                        onClick={() => editComment(comment.id)}
-                      >
-                        수정
-                      </button>
-                    </>
-                  ) : null}
                 </div>
               )
             )}
