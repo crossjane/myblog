@@ -399,7 +399,6 @@ function CategoriesDetail() {
         uid: user.uid,
       };
 
-      //saveComent()에서 댓글 등록한 후 setComment에 새 댓글을 추가할떄 댓글 id값 부재
       const docRef = await addDoc(commentRef, newComment);
 
       const commentWithId = {
@@ -407,6 +406,8 @@ function CategoriesDetail() {
         ...newComment,
         isEdit: false,
         tempComment: "",
+        uid: user.uid,
+        user: user,
       };
 
       setTempComment("");
@@ -525,14 +526,14 @@ function CategoriesDetail() {
           {/* 내용 */}
           <div className="flex flex-col min-h-80">
             {detailIsEdit ? (
-              <input
-                className="border-1 rounded-md"
+              <textarea
+                className="border-1 rounded-md min-h-[300px] leading-relaxed border-none resize-none focus:outline-none align-top"
                 type="text"
                 value={tempDetail}
                 onChange={changeDetail}
               />
             ) : (
-              <div className="justify-start text-left py-6 text-[14px]">
+              <div className="justify-start text-left py-6 text-[14px] min-h-[300px] leading-relaxed whitespace-pre-line">
                 {board.contents}
                 {board.imageUrl && (
                   <img
@@ -543,7 +544,7 @@ function CategoriesDetail() {
               </div>
             )}
 
-            <div className="flex">
+            <div className="flex justify-end items-center gap-2 mb-2">
               {detailIsEdit ? (
                 <button
                   className="hover:font-medium cursor-pointer"
@@ -552,29 +553,27 @@ function CategoriesDetail() {
                   수정완료
                 </button>
               ) : user && user.uid === board.uid ? (
-                <div className="text-[15px] pr-2 gap-2 flex justify-start ml-10 mb-2 cursor-pointer">
+                <>
                   <button
                     className="hover:font-medium cursor-pointer"
                     onClick={detailEdit}
                   >
-                    수정
+                    <img src="/public/edit.svg" className="h-6" />
                   </button>
                   <button
                     className="hover:font-medium cursor-pointer"
                     onClick={detailDelete}
                   >
-                    삭제
+                    <img src="/public/delete.svg" className="h-5" />
                   </button>
-                </div>
+                </>
               ) : null}
-              <div className="flex ml-auto justify-end mr-10 mb-2">
-                <button
-                  className="text-[15px] cursor-pointer hover:font-medium"
-                  onClick={() => navigate(`/categories`)}
-                >
-                  목록으로 가기
-                </button>
-              </div>
+              <button
+                className="text-[15px] cursor-pointer hover:font-medium ml-2"
+                onClick={() => navigate(`/categories`)}
+              >
+                목록으로 가기
+              </button>
             </div>
           </div>
         </div>
@@ -656,11 +655,11 @@ function CategoriesDetail() {
         {/* 목록으로가기  */}
         <div></div>
 
-        <div className="mt-5">
+        <div className="flex flex-row itmes-center w-full mt-5">
           {/* {user && <span>{user.name}</span>} */}
 
           <input
-            className="bg-white border-gray-300 border-1 focus:px-2 rounded-md h-8 w-[88%] mr-3  focus:outline-none"
+            className="flex-1 bg-white border-gray-300 border-1 focus:px-2 rounded-md h-8 mr-3 focus:outline-none"
             type="text"
             value={tempComment}
             onChange={changeComment}

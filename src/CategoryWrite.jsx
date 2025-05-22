@@ -27,7 +27,7 @@ function CategoryWrite() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const inputRef = useRef();
   const [selectFileImg, setSelectFileImg] = useState(false);
-  // const [setUrlFiles, setUrlFiles] = useState([]);
+  const [successImageUrls, setSuccessImageUrls] = useState([]);
 
   async function getMe() {
     const auth = getAuth();
@@ -76,31 +76,40 @@ function CategoryWrite() {
   }
 
   async function onChangeFile(event) {
-    // Array.form() 유사배열, 또는 이터러블 객체를 진짜 배열 Array로 변환해주는 정적 메서드드
     setUploadLoading(true);
-    const file = event.target.files[0];
-    const add_files = Array.form(files); //파일에 배열 넣기.
+    console.log("files", event.target.files);
+    const files = event.target.files;
+    // const file = event.target.files[0];
+    const successImageUrls = [];
 
-    setSelectFileImg(!!file);
     const s3 = new AWS.S3({
       region: "ap-northeast-3",
       accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY,
       secretAccessKey: import.meta.env.VITE_AWS_PRIVATE_KEY,
     });
 
-    const fileName = `${Date.now()}_${file.name}`;
-    const params = {
-      ACL: "public-read",
-      Body: file,
-      Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
-      Key: `upload/${fileName}`,
-    };
+    for (let i = 0; files.length > i; i++) {
+      const file = files[i];
+      const fileName = `${Date.now()}_${file.name}`;
+      const params = {
+        ACL: "public-read",
+        Body: file,
+        Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
+        Key: `upload/${fileName}`,
+      };
 
-    await s3.putObject(params).promise();
+      // 파일을 s3에 업로드.
+      await s3.putObject(params).promise();
+      successImageUrls.push(
+        `https://janes-blog.s3.ap-northeast-3.amazonaws.com/upload/${fileName}`
+      );
+    }
+    setSuccessImageUrls(successImageUrls);
+    setSelectFileImg(files.length > 0);
 
-    setImageUrl(
-      `https://janes-blog.s3.ap-northeast-3.amazonaws.com/upload/${fileName}`
-    );
+    // setImageUrl(
+    //   `https://janes-blog.s3.ap-northeast-3.amazonaws.com/upload/${fileName}`
+    // );
     setUploadLoading(false);
   }
 
@@ -185,7 +194,28 @@ function CategoryWrite() {
                         </div>
                       </>
                     ) : selectFileImg ? (
-                      <img width={100} height={100} src={imageUrl} />
+                      <>
+                        <img
+                          width={100}
+                          height={100}
+                          src={successImageUrls}
+                          className="mx-3"
+                        />
+                        <div className="group cursor-pointer">
+                          <img
+                            width={100}
+                            height={100}
+                            src="/file_add.svg"
+                            className="block group-hover:hidden "
+                          />
+                          <img
+                            width={100}
+                            height={100}
+                            src="/file_add_hover.svg"
+                            className="hidden group-hover:block "
+                          />
+                        </div>
+                      </>
                     ) : (
                       // group으로 묶어줘야함. 부모요소에 마우스를 올리면-> 자식의 스타일이 바꾸길 원함
                       // group을 쓰지 않으면 hidden 이 되어있기때문에 두번째 작동안함.

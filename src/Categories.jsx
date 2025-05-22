@@ -269,8 +269,6 @@ function Categories() {
                 <div className="flex flex-1">
                   <p className="text-gray-700 text-[15px]">
                     {board.contents} <br />
-                    asdasda <br />
-                    sdasds
                   </p>
                 </div>
                 <div className="flex items-end">
