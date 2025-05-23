@@ -44,8 +44,8 @@ function Header({ user }) {
           dispatch(userAction.updateUser({ uid, ...userSnap.data() }));
         }
       } else {
-        alert("로그인 정보가 없습니다.");
-        navigate("/login");
+        // alert("로그인 정보가 없습니다.");
+        // navigate("/login");
       }
     });
   }
@@ -62,14 +62,15 @@ function Header({ user }) {
             {userState.name}님 환영합니다.
           </p>
         )}
-
-        <button
-          className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 pb-1 mr-4 cursor-pointer hover:bg-[#e6ecec]"
-          style={{ fontFamily: '"Josefin Slab"' }}
-          onClick={() => navigate("/mypage")}
-        >
-          my page
-        </button>
+        {user && (
+          <button
+            className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 pb-1 mr-4 cursor-pointer hover:bg-[#e6ecec]"
+            style={{ fontFamily: '"Josefin Slab"' }}
+            onClick={() => navigate("/mypage")}
+          >
+            my page
+          </button>
+        )}
         {userState ? (
           <button
             className="text-[#5F7D7D] font-semibold text-[16px] rounded-md border-2 px-4 cursor-pointer hover:bg-[#e6ecec]"

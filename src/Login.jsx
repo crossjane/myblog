@@ -75,6 +75,18 @@ function Login() {
       >
         로그인 하기
       </button>
+      <button
+        className=" text-[rgb(65,117,78)] mt-2 hover:font-medium cursor-pointer "
+        onClick={() => navigate("/join")}
+      >
+        회원가입 하기
+      </button>
+      <button
+        className=" text-gray-600 mt-2 hover:font-medium cursor-pointer "
+        onClick={() => navigate("/categories?tab=OfLdJf7dkBswF0756yBw")}
+      >
+        로그인 없이 진행
+      </button>
     </div>
   );
 }

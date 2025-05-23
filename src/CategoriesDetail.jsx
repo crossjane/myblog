@@ -414,7 +414,7 @@ function CategoriesDetail() {
       setComments((prev) => [...prev, commentWithId]);
     } catch (error) {
       console.log("error", error);
-      alert("댓글을 저장할 수 없습니다.");
+      alert("로그인 후 이용해주세요.");
     }
   }
 

@@ -183,32 +183,36 @@ function Categories() {
           })}
         </ul>
         <div className="flex flex-row items-center gap-2">
-          {user && (
-            <>
-              <div className="relative group">
-                <button
-                  className="w-7 h-auto cursor-pointer"
-                  onClick={deleteBoards}
-                >
-                  <img src="/board_delete.png" alt="글삭제"></img>
-                </button>
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
-                  글삭제
-                </div>
+          <>
+            {/* <div className="relative group">
+              <button
+                className="w-7 h-auto cursor-pointer"
+                onClick={deleteBoards}
+              >
+                <img src="/board_delete.png" alt="글삭제"></img>
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                글삭제
               </div>
-              <div className="relative group">
-                <button
-                  className="w-7 h-auto cursor-pointer"
-                  onClick={gotoWrite}
-                >
-                  <img src="/board_wirte.svg" alt="글쓰기기"></img>
-                </button>
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
-                  글쓰기
-                </div>
+            </div> */}
+            <div className="relative group">
+              <button
+                className="w-7 h-auto cursor-pointer"
+                onClick={() => {
+                  if (user) {
+                    gotoWrite();
+                  } else {
+                    alert("로그인 후 글쓰기가 가능합니다.");
+                  }
+                }}
+              >
+                <img src="/board_wirte.svg" alt="글쓰기기"></img>
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
+                글쓰기
               </div>
-            </>
-          )}
+            </div>
+          </>
 
           <Menu>
             <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">

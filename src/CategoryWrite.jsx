@@ -123,22 +123,6 @@ function CategoryWrite() {
       {uid && (
         <div className="flex justify-center">
           <div className="container-board">
-            <Menu>
-              <MenuButton className="focus:outline-none text-[#5F7D7D] text-[13px] px-2 py-1 cursor-pointer border-1 rounded boder-[#5F7D7D]">
-                최신순 ▼
-              </MenuButton>
-              <MenuItems anchor="bottom">
-                <MenuItem className="text-[#5F7D7D] text-[13px]">
-                  <a
-                    className="cursor-pointer focus:outline-none focus-visible:outline-none block data-focus:bg-[#e6ecec] py-1 px-4 rounded "
-                    // href="/settings"
-                  >
-                    인기순
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
-
             <div className="board-detail mt-20 ">
               <div className="board-title">
                 <input
@@ -195,24 +179,27 @@ function CategoryWrite() {
                       </>
                     ) : selectFileImg ? (
                       <>
-                        <img
-                          width={100}
-                          height={100}
-                          src={successImageUrls}
-                          className="mx-3"
-                        />
+                        {/* 배열이기 때문에 map으로 미리보기 */}
+                        {successImageUrls.map((url, index) => (
+                          <img
+                            key={index}
+                            src={url}
+                            className="mx-2 w-[100px] h-[100px]"
+                          />
+                        ))}
+
                         <div className="group cursor-pointer">
                           <img
                             width={100}
                             height={100}
                             src="/file_add.svg"
-                            className="block group-hover:hidden "
+                            className="block group-hover:hidden mx-2 "
                           />
                           <img
                             width={100}
                             height={100}
                             src="/file_add_hover.svg"
-                            className="hidden group-hover:block "
+                            className="hidden group-hover:block mx-2"
                           />
                         </div>
                       </>
