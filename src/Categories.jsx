@@ -20,6 +20,9 @@ import { userAction, userSelector } from "./features/user/slice";
 import { categoryAction, categorySelector } from "./features/category/slice";
 import { boardAction, boardSelector } from "./features/board/slice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Pagination, PaginationItem } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 // 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
 // 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨
@@ -36,6 +39,11 @@ function Categories() {
   const { user } = useSelector(userSelector.selectUser);
   const { categories } = useSelector(categorySelector.selectCategories);
   const { boards } = useSelector(boardSelector.selectBoard);
+  // 현재 페이지지
+  const [currentPage, setCurrentPage] = useState(1);
+  const onPageChange = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
 
   async function loadCategories() {
     try {
@@ -283,6 +291,23 @@ function Categories() {
           ))}
         </div>
       )}
+      <Pagination
+        count={Math.ceil(boards.length / 10)}
+        page={currentPage}
+        onChange={onPageChange}
+        size="medium"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "15px 0",
+        }}
+        renderItem={(item) => (
+          <PaginationItem
+            slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+            {...item}
+          />
+        )}
+      />
     </div>
   );
 }
