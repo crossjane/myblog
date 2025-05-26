@@ -24,10 +24,6 @@ import { Pagination, PaginationItem } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-// 포인트 : category.id / board.id 각각 받아서 categoryid는 상태로 저장= > 상태로 받기 -> 보드id는 바로 이동
-// 왜 목록으로 다시올때, ? 재로드 하면 loadCategory가 안됨
-//콜백??
-
 function Categories() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -44,6 +40,11 @@ function Categories() {
   const onPageChange = (event, newPage) => {
     setCurrentPage(newPage);
   };
+
+  const items_per_page = 10;
+  const indexOfLast = currentPage * items_per_page;
+  const indexOfFirst = indexOfLast - items_per_page;
+  const currentBoards = boards.slice(indexOfFirst, indexOfLast);
 
   async function loadCategories() {
     try {
@@ -262,7 +263,7 @@ function Categories() {
         </div>
       ) : (
         <div className="flex flex-col">
-          {boards.map((board) => (
+          {currentBoards.map((board) => (
             <div
               key={board.id}
               className="flex flex-col border-b border-gray-300 py-4"
