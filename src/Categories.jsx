@@ -4,6 +4,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import db from "./firebase";
@@ -48,16 +50,25 @@ function Categories() {
 
   async function loadCategories() {
     try {
-      const query = await getDocs(collection(db, "category"));
+      const q = query(collection(db, "category"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+
       const newCategories = [];
-      query.forEach(async (doc) => {
+      querySnapshot.forEach((doc) => {
         const id = doc.id;
         const data = doc.data();
-        const formatCategory = { id, ...data, isChecked: false };
+        const formatCategory = {
+          id,
+          ...data,
+          createdAt: data.createdAt?.toDate()?.toISOString() ?? null,
+          isChecked: false,
+        };
 
         newCategories.push(formatCategory);
       });
-      setTab(newCategories[0].id);
+      if (newCategories.length > 0) {
+        setTab(newCategories[0].id);
+      }
       dispatch(categoryAction.updateCategories(newCategories));
     } catch (error) {
       console.error("error", error);
@@ -76,7 +87,11 @@ function Categories() {
         query.forEach((doc) => {
           const id = doc.id;
           const data = doc.data();
-          const formatBoard = { id, ...data };
+          const formatBoard = {
+            id,
+            ...data,
+            createdAt: data.createdAt?.toDate()?.toISOString() ?? null,
+          };
 
           newBoards.push(formatBoard);
         });
@@ -161,9 +176,11 @@ function Categories() {
   }, []);
 
   useEffect(() => {
-    console.log("searchParams.get: ", searchParams.get("tab"));
-    setTab(searchParams.get("tab"));
-  }, [searchParams.get("tab")]);
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setTab(tabParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     clickCategory();
@@ -274,7 +291,9 @@ function Categories() {
                   {board.title}
                 </h2>
                 <span className="flex text-sm text-gray-500">
-                  2025-04-28 15:00
+                  {board.createdAt
+                    ? new Date(board.createdAt).toLocaleString()
+                    : ""}
                 </span>
               </div>
 
@@ -285,7 +304,11 @@ function Categories() {
                   </p>
                 </div>
                 <div className="flex items-end">
-                  <img src="/empty_heart.svg" alt="빈하트" className="w-5" />
+                  <img
+                    src="/empty_heart.svg"
+                    alt="빈하트"
+                    className="w-5 cursor-pointer"
+                  />
                 </div>
               </div>
             </div>

@@ -1,4 +1,11 @@
-import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import "./App.css";
 import React, { useEffect, useRef, useState } from "react";
 import db from "./firebase";
@@ -28,6 +35,7 @@ function CategoryWrite() {
   const inputRef = useRef();
   const [selectFileImg, setSelectFileImg] = useState(false);
   const [successImageUrls, setSuccessImageUrls] = useState([]);
+  const [createdAt, setCreatedAt] = useState(new Date());
 
   async function getMe() {
     const auth = getAuth();
@@ -58,7 +66,13 @@ function CategoryWrite() {
     try {
       const docRef = await addDoc(
         collection(db, "category", categoryId, "board"),
-        { title, contents, uid, imageUrl }
+        {
+          title,
+          contents,
+          uid,
+          imageUrl,
+          createdAt: Timestamp.fromDate(createdAt),
+        }
       );
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {

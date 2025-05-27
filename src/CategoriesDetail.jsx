@@ -27,12 +27,9 @@ function CategoriesDetail() {
   const [comments, setComments] = useState([]);
   const [detailIsEdit, setDetailIsEdit] = useState(false);
   const [tempDetail, setTempDetail] = useState("");
-  const { categoryId } = useParams();
-  const { boardId } = useParams();
+  const { categoryId, boardId } = useParams();
   const { user } = useSelector(userSelector.selectUser);
 
-  //getMe로 로그인 정보를 가져오고 -> 리덕스(상태)에 해당 정보를 저장->
-  // 근데 이건 getDoc? firebase에서 uid를 가져온다음에 저장해야되나?
   async function getMe() {
     const auth = getAuth();
     onAuthStateChanged(auth, async (user) => {
@@ -49,7 +46,6 @@ function CategoriesDetail() {
     });
   }
 
-  // 카테고리 아이디가 안오는것같음..왜?
   async function getBoard() {
     const docRef = doc(db, "category", categoryId, "board", boardId);
     const docSnap = await getDoc(docRef);
@@ -57,11 +53,14 @@ function CategoriesDetail() {
     if (docSnap.exists()) {
       const id = docSnap.id;
       const data = docSnap.data();
-      const formatBoard = { id, ...data };
+      const formatBoard = {
+        id,
+        ...data,
+        createdAt: data.createdAt?.toDate() ?? null,
+      };
 
       console.log("doformatBoard", formatBoard);
 
-      //board는 set이 안되어있을 가능성->
       const userRef = doc(db, "users", formatBoard.uid);
       const userSnap = await getDoc(userRef);
 
@@ -101,7 +100,7 @@ function CategoriesDetail() {
       }
 
       setBoard(formatBoard);
-      console.log("board!!!", board);
+      console.log("formatboard!!!", formatBoard);
     }
   }
 
@@ -501,8 +500,10 @@ function CategoriesDetail() {
             </div>
             <div className="flex flex-row items-center">
               <div className="flex flex-1 gap-3 items-center">
-                <span className=" text-[14px]"> {board.user?.name}이름</span>
-                <span className="text-[14px]">2025-04-29</span>
+                <span className=" text-[14px]"> {board.user?.name}</span>
+                <span className="text-[14px]">
+                  {board.createdAt?.toLocaleString()}
+                </span>
               </div>
               <div className="flex">
                 <img
