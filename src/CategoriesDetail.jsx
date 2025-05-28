@@ -11,6 +11,7 @@ import {
   query,
   deleteDoc,
   where,
+  increment,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -29,6 +30,7 @@ function CategoriesDetail() {
   const [tempDetail, setTempDetail] = useState("");
   const { categoryId, boardId } = useParams();
   const { user } = useSelector(userSelector.selectUser);
+  const [heart, setHeart] = useState([]);
 
   async function getMe() {
     const auth = getAuth();
@@ -180,6 +182,9 @@ function CategoriesDetail() {
 
   async function like() {
     try {
+      //눌러진 like 가 없다면 newLike add, like 수 증가.
+      //like count :board 에 likecount 생성 해서 저장 -> 증가/ 감소 시키기
+      //
       if (!board.likeId) {
         const likeRef = collection(
           db,
@@ -192,10 +197,13 @@ function CategoriesDetail() {
 
         const newLike = {
           uid: user.uid,
+          // likeCount: 원래있는 갯수에서 +1을 더해야함
+          //라이크 갯수를 어케샘 ?like의갯수
+          // likeCount: likeRef.length +1 ? like는 배열 .
         };
 
         const docRef = await addDoc(likeRef, newLike);
-        setBoard({ ...board, likeId: docRef.id });
+        setBoard((prev) => ({ ...prev, likeId: docRef.id }));
         return;
       }
 

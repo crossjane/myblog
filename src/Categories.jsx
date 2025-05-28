@@ -50,7 +50,8 @@ function Categories() {
 
   async function loadCategories() {
     try {
-      const q = query(collection(db, "category"), orderBy("createdAt", "desc"));
+      // collection 문서들이 있는 컬렉션 기준으로 . doc() 은 하나의
+      const q = query(collection(db, "category"));
       const querySnapshot = await getDocs(q);
 
       const newCategories = [];
@@ -82,7 +83,10 @@ function Categories() {
       setBoardLoading(true);
 
       try {
-        const query = await getDocs(collection(db, "category", tab, "board"));
+        const query = await getDocs(
+          collection(db, "category", tab, "board"),
+          orderBy("createdAt", "desc")
+        );
         const newBoards = [];
         query.forEach((doc) => {
           const id = doc.id;
@@ -210,17 +214,6 @@ function Categories() {
         </ul>
         <div className="flex flex-row items-center gap-2">
           <>
-            {/* <div className="relative group">
-              <button
-                className="w-7 h-auto cursor-pointer"
-                onClick={deleteBoards}
-              >
-                <img src="/board_delete.png" alt="글삭제"></img>
-              </button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-500 text-white text-xs w-13 rounded py-1 px-2">
-                글삭제
-              </div>
-            </div> */}
             <div className="relative group">
               <button
                 className="w-7 h-auto cursor-pointer"
@@ -279,7 +272,7 @@ function Categories() {
           <span class="sr-only">Loading...</span>
         </div>
       ) : (
-        <div className="flex flex-col">
+        <div className="flex flex-col cursor-pointer">
           {currentBoards.map((board) => (
             <div
               key={board.id}
@@ -303,12 +296,9 @@ function Categories() {
                     {board.contents} <br />
                   </p>
                 </div>
-                <div className="flex items-end">
-                  <img
-                    src="/empty_heart.svg"
-                    alt="빈하트"
-                    className="w-5 cursor-pointer"
-                  />
+                <div className="flex items-center">
+                  <div className="mr-[3px]">27</div>
+                  <img src="/full_heart.svg" alt="빈하트" className="w-5" />
                 </div>
               </div>
             </div>
