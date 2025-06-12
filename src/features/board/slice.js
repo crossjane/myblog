@@ -6,6 +6,7 @@ const initialState = {
 
 const reducers = {
   updateBoard: (state, action) => {
+    console.log("action.payload :", action.payload);
     state.boards = action.payload;
   },
 };

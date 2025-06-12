@@ -97,7 +97,7 @@ function Header({ user }) {
         >
           Jane's Blog
         </b>
-        Jane의 개인 블로그입니다.
+        Jane의 front-end 기술 블로그 입니다.
         <img src="/line_keyboard.png" className="w-80 h-auto" alt={"text"} />
       </div>
     </>

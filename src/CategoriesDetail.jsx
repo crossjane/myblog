@@ -28,6 +28,7 @@ function CategoriesDetail() {
   const [comments, setComments] = useState([]);
   const [detailIsEdit, setDetailIsEdit] = useState(false);
   const [tempDetail, setTempDetail] = useState("");
+  const [tempTitle, setTempTitle] = useState("");
   const { categoryId, boardId } = useParams();
   const { user } = useSelector(userSelector.selectUser);
   const [heart, setHeart] = useState([]);
@@ -114,9 +115,14 @@ function CategoriesDetail() {
     setTempDetail(e.target.value);
   }
 
+  function changeTitle(e) {
+    setTempTitle(e.target.value);
+  }
+
   function detailEdit() {
     setDetailIsEdit(true);
     setTempDetail(board.contents);
+    setTempTitle(board.title);
   }
 
   async function detailDelete() {
@@ -289,10 +295,12 @@ function CategoriesDetail() {
 
       await updateDoc(docRef, {
         contents: tempDetail,
+        title: tempTitle,
       });
 
       setBoard((prev) => ({
         ...prev,
+        title: tempTitle,
         contents: tempDetail,
       }));
 
@@ -500,12 +508,23 @@ function CategoriesDetail() {
         {/* z컨텐츠 */}
         <div>
           {/* 제목  */}
+
           <div className="flex flex-col pb-3 border-b border-gray-300">
-            <div>
-              <p className="text-left font-bold text-[20px] mb-4">
-                {board.title}
-              </p>
-            </div>
+            {detailIsEdit ? (
+              <div className="flex flex-row ">
+                <input
+                  className="text-left font-bold text-[20px] mb-4 focus:outline-none "
+                  value={tempTitle}
+                  onChange={changeTitle}
+                ></input>
+              </div>
+            ) : (
+              <div>
+                <p className="text-left font-bold text-[20px] mb-4">
+                  {board.title}
+                </p>
+              </div>
+            )}
             <div className="flex flex-row items-center">
               <div className="flex flex-1 gap-3 items-center">
                 <span className=" text-[14px]"> {board.user?.name}</span>
@@ -580,6 +599,7 @@ function CategoriesDetail() {
               <button
                 className="text-[15px] cursor-pointer hover:font-medium ml-2"
                 onClick={() => navigate(`/categories`)}
+                // 여기서 리렌더링 되게 ? 어떻게 하는지??
               >
                 목록으로 가기
               </button>

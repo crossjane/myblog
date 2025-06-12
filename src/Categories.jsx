@@ -44,15 +44,17 @@ function Categories() {
   };
 
   const items_per_page = 10;
+  // 상태로로
   const indexOfLast = currentPage * items_per_page;
   const indexOfFirst = indexOfLast - items_per_page;
+  // 상태로 해야됨됨
   const currentBoards = boards.slice(indexOfFirst, indexOfLast);
 
   async function loadCategories() {
     try {
       // collection 문서들이 있는 컬렉션 기준으로 . doc() 은 하나의
-      const q = query(collection(db, "category"));
-      const querySnapshot = await getDocs(q);
+
+      const querySnapshot = await getDocs(collection(db, "category"));
 
       const newCategories = [];
       querySnapshot.forEach((doc) => {
@@ -83,14 +85,16 @@ function Categories() {
       setBoardLoading(true);
 
       try {
-        const query = await getDocs(
+        const q = query(
           collection(db, "category", tab, "board"),
           orderBy("createdAt", "desc")
         );
+        const result = await getDocs(q);
         const newBoards = [];
-        query.forEach((doc) => {
+        result.forEach((doc) => {
           const id = doc.id;
           const data = doc.data();
+
           const formatBoard = {
             id,
             ...data,
@@ -101,6 +105,10 @@ function Categories() {
         });
 
         for (const newBoard of newBoards) {
+          const likeResult = await getDocs(
+            collection(db, "category", tab, "board", newBoard.id, "like")
+          );
+          newBoard.likeCount = likeResult.size;
           if (newBoard.uid) {
             const userRef = doc(db, "users", newBoard.uid);
             const userSnap = await getDoc(userRef);
@@ -117,7 +125,6 @@ function Categories() {
         setBoardLoading(false);
       } catch (error) {
         console.error("error", error);
-        alert("페이지로 이동할 수 없습니다.");
       }
     }
   }
@@ -279,8 +286,8 @@ function Categories() {
               className="flex flex-col border-b border-gray-300 py-4"
               onClick={() => gotoDetail(board.id)}
             >
-              <div className="flex flex-row items-center mb-4">
-                <h2 className="flex mr-3 font-medium text-[22px] text-gray-600">
+              <div className="flex mt-3 flex-row items-center mb-4">
+                <h2 className="flex mr-3 font-medium text-[22px] text-gray-600 ">
                   {board.title}
                 </h2>
                 <span className="flex text-sm text-gray-500">
@@ -290,14 +297,14 @@ function Categories() {
                 </span>
               </div>
 
-              <div className="flex flex-row mt-2 flex-wrap">
+              <div className="flex flex-row flex-wrap">
                 <div className="flex flex-1">
-                  <p className="text-gray-700 text-[15px]">
+                  <p className="text-gray-700 text-[15px] line-clamp-3 leading-5 w-[95%] text-left">
                     {board.contents} <br />
                   </p>
                 </div>
                 <div className="flex items-center">
-                  <div className="mr-[3px]">27</div>
+                  <div className="mr-[3px]">{board.likeCount}</div>
                   <img src="/full_heart.svg" alt="빈하트" className="w-5" />
                 </div>
               </div>

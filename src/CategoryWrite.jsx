@@ -149,8 +149,8 @@ function CategoryWrite() {
                 <div className="board-title-line"></div>
               </div>
               <div className="board-contents min-h-100">
-                <input
-                  className="flex focus:outline-none focus:border-none"
+                <textarea
+                  className="flex focus:outline-none focus:border-none w-full min-h-90 tracking-nomal leading-relaxed"
                   type="text"
                   placeholder="내용을 입력해주세요."
                   onChange={contentChange}

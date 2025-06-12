@@ -89,7 +89,7 @@ function BoardDetail() {
 
   return (
     <>
-      <div className="board-detail">
+      <div className="w-[700px]">
         {board ? (
           <>
             <div className="board-title">{board.title}</div>
@@ -97,13 +97,14 @@ function BoardDetail() {
           </>
         ) : null}
 
-        <div className="btns">
+        <div className="w-[700px]">
           {isEdit ? (
             <>
               <input
                 type="text"
                 value={tempContent}
                 onChange={changeEditContent}
+                className="w-full max-w-[700px] h-[40px]"
               />
               <button onClick={editSave}>완료</button>
             </>
@@ -111,7 +112,6 @@ function BoardDetail() {
             <button onClick={editContent}>수정</button>
           )}
           <button onClick={() => navigate("/boards")}>목록으로 가기</button>
-
         </div>
 
         {comments ? (
