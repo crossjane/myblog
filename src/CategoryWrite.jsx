@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import AWS from "aws-sdk";
+import Editor from "./Components/Editor";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
@@ -134,6 +135,7 @@ function CategoryWrite() {
   return (
     <>
       <Header user={user} />
+      <Editor content={contents} onChangeContent={setContents} />
       {uid && (
         <div className="flex justify-center">
           <div className="container-board">
