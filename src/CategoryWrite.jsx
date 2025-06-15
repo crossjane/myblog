@@ -1,11 +1,4 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, Timestamp } from "firebase/firestore";
 import "./App.css";
 import React, { useEffect, useRef, useState } from "react";
 import db from "./firebase";
@@ -16,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import AWS from "aws-sdk";
-import Editor from "./Components/Editor";
+import { Editor, MenuBar } from "./Components/Editor";
 
 function CategoryWrite() {
   const [title, setTitle] = useState("");
@@ -135,7 +128,6 @@ function CategoryWrite() {
   return (
     <>
       <Header user={user} />
-      <Editor content={contents} onChangeContent={setContents} />
       {uid && (
         <div className="flex justify-center">
           <div className="container-board">
@@ -151,6 +143,7 @@ function CategoryWrite() {
                 <div className="board-title-line"></div>
               </div>
               <div className="board-contents min-h-100">
+                <Editor onChangeContent={setContents} />
                 <textarea
                   className="flex focus:outline-none focus:border-none w-full min-h-90 tracking-nomal leading-relaxed"
                   type="text"

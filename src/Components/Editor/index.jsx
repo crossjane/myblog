@@ -31,10 +31,11 @@ lowlight.register("css", css);
 lowlight.register("js", js);
 lowlight.register("ts", ts);
 
-const MenuBar = ({ editor }) => {
+export const MenuBar = ({ editor }) => {
   if (!editor) {
     return null;
   }
+  const editStlye = "p-2 cursor-pointer";
 
   return (
     <div className="control-group">
@@ -42,58 +43,129 @@ const MenuBar = ({ editor }) => {
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "is-active" : ""}
+          className={`${editor.isActive("bold") ? "is-active" : ""} ${editStlye}`}
         >
-          Bold
+          <img
+            src="/public/textEditor_bold.svg"
+            alt="Bold"
+            className="w-6 h-auto"
+          />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "is-active" : ""}
+          className={`${editor.isActive("italic") ? "is-active" : ""} ${editStlye}`}
         >
-          Italic
+          <img
+            src="/public/textEditor_italic.svg"
+            alt="italic"
+            className="w-6 h-auto"
+          />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
-          className={editor.isActive("strike") ? "is-active" : ""}
+          className={`${editor.isActive("strike") ? "is-active" : ""} ${editStlye}`}
         >
-          Strike
+          <img
+            src="/public/textEditor_strike.svg"
+            alt="strike"
+            className="w-6 h-auto"
+          />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "is-active" : ""}
+          className={`${editor.isActive("bulletList") ? "is-active" : ""} ${editStlye}`}
         >
-          Bullet list
+          <img
+            src="/public/textEditor_bulletList.svg"
+            alt="bulletList"
+            className="w-6 h-auto"
+          />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "is-active" : ""}
+          className={`${editor.isActive("blockquote") ? "is-active" : ""} ${editStlye}`}
         >
-          Blockquote
+          {" "}
+          <img
+            src="/public/textEditor_quote.svg"
+            alt="quote"
+            className="w-6 h-auto"
+          />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive("codeBlock") ? "is-active" : ""}
+          className={`${editor.isActive("codeBlock") ? "is-active" : ""} ${editStlye}`}
         >
-          Toggle code block
+          <img
+            src="/public/textEditor_codeBlock.svg"
+            alt="codeBlock"
+            className="w-6 h-auto"
+          />
         </button>
         <button
-          onClick={() => editor.chain().focus().setColor("#958DF1").run()}
-          className={
-            editor.isActive("textStyle", { color: "#958DF1" })
-              ? "is-active"
-              : ""
-          }
+          onClick={() => editor.chain().focus().setColor("#DC2626").run()}
+          className={`${editor.isActive("textStyle", { color: "#DC2626" }) ? "is-active" : ""} ${editStlye}`}
         >
-          Purple
+          <img src="/public/color_red.svg" alt="red" className="w-6 h-auto" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#965AFD").run()}
+          className={`${editor.isActive("textStyle", { color: "#965AFD" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img
+            src="/public/color_purple.svg"
+            alt="red"
+            className="w-6 h-auto"
+          />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#1E40AF").run()}
+          className={`${editor.isActive("textStyle", { color: "#1E40AF" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img src="/public/color_blue.svg" alt="red" className="w-6 h-auto" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#047857").run()}
+          className={`${editor.isActive("textStyle", { color: "#047857" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img src="/public_green.svg" alt="red" className="w-6 h-auto" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#4B5320").run()}
+          className={`${editor.isActive("textStyle", { color: "#4B5320" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img
+            src="/public/color_olivegreen.svg"
+            alt="red"
+            className="w-6 h-auto"
+          />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#999999").run()}
+          className={`${editor.isActive("textStyle", { color: "#999999" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img src="/public/color_red.svg" alt="red" className="w-6 h-auto" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#64748B").run()}
+          className={`${editor.isActive("textStyle", { color: "#64748B" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img src="/public/color_red.svg" alt="red" className="w-6 h-auto" />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setColor("#2E2E2E").run()}
+          className={`${editor.isActive("textStyle", { color: "##2E2E2E" }) ? "is-active" : ""} ${editStlye}`}
+        >
+          <img src="/public/color_red.svg" alt="red" className="w-6 h-auto" />
         </button>
       </div>
     </div>
   );
 };
 
-const Editor = ({content, onChangeContent}) => {
+export const Editor = ({ onChangeContent }) => {
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -113,25 +185,11 @@ const Editor = ({content, onChangeContent}) => {
         },
       }).configure({ lowlight }),
     ],
-    content: `
-        <p>
-          That's a boring paragraph followed by a fenced code block:
-        </p>
-        <pre><code class="language-javascript">for (var i=1; i <= 20; i++)
-{
-  if (i % 15 == 0)
-    console.log("FizzBuzz");
-  else if (i % 3 == 0)
-    console.log("Fizz");
-  else if (i % 5 == 0)
-    console.log("Buzz");
-  else
-    console.log(i);
-}</code></pre>
-        <p>
-          Press Command/Ctrl + Enter to leave the fenced code block and continue typing in boring paragraphs.
-        </p>
-      `,
+    content: "<p>내용을 입력해주세요<p>",
+    onUpdate: () => {
+      const html = editor.getHTML();
+      onChangeContent(html);
+    },
   });
 
   return (
@@ -141,5 +199,3 @@ const Editor = ({content, onChangeContent}) => {
     </>
   );
 };
-
-export default Editor;
