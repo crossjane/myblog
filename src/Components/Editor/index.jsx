@@ -130,7 +130,7 @@ export const MenuBar = ({ editor }) => {
           onClick={() => editor.chain().focus().setColor("#047857").run()}
           className={`${editor.isActive("textStyle", { color: "#047857" }) ? "is-active" : ""} ${editStlye}`}
         >
-          <img src="/public_green.svg" alt="red" className="w-6 h-auto" />
+          <img src="/public/color_green.svg" alt="red" className="w-6 h-auto" />
         </button>
         <button
           onClick={() => editor.chain().focus().setColor("#4B5320").run()}
