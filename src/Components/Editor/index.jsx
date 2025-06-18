@@ -167,6 +167,11 @@ export const MenuBar = ({ editor }) => {
 
 export const Editor = ({ onChangeContent }) => {
   const editor = useEditor({
+    editorProps: {
+      attributes: {
+        class: "focus:outline-none",
+      },
+    },
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] }),
@@ -195,7 +200,7 @@ export const Editor = ({ onChangeContent }) => {
   return (
     <>
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="text-left" />
     </>
   );
 };

@@ -142,17 +142,17 @@ function CategoryWrite() {
                 />
                 <div className="board-title-line"></div>
               </div>
+              
               <div className="board-contents min-h-100">
                 <Editor onChangeContent={setContents} />
-                <textarea
+                {/* <textarea
                   className="flex focus:outline-none focus:border-none w-full min-h-90 tracking-nomal leading-relaxed"
                   type="text"
                   placeholder="내용을 입력해주세요."
                   onChange={contentChange}
                   value={contents}
-                />
+                /> */}
               </div>
-
               <div className="flex flex-col justify-center">
                 <div>첨부파일 등록</div>
                 <input
