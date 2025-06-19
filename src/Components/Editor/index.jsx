@@ -14,6 +14,7 @@ import html from "highlight.js/lib/languages/xml";
 import { all, createLowlight } from "lowlight";
 import ListItem from "@tiptap/extension-list-item";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
 
 import React from "react";
 
@@ -35,7 +36,7 @@ export const MenuBar = ({ editor }) => {
   if (!editor) {
     return null;
   }
-  const editStlye = "p-2 cursor-pointer";
+  const editStlye = "p-2 cursor-pointer ";
 
   return (
     <div className="control-group">
@@ -184,13 +185,16 @@ export const Editor = ({ onChangeContent }) => {
       Document,
       Paragraph,
       Text,
+      Placeholder.configure({
+        placeholder: "내용을 입력해주세요",
+      }),
       CodeBlockLowlight.extend({
         addNodeView() {
           return ReactNodeViewRenderer(CodeBlockComponent);
         },
       }).configure({ lowlight }),
     ],
-    content: "<p>내용을 입력해주세요<p>",
+    content: "",
     onUpdate: () => {
       const html = editor.getHTML();
       onChangeContent(html);

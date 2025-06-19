@@ -563,9 +563,9 @@ function CategoriesDetail() {
               />
             ) : (
               <div className="justify-start text-left py-6 text-[14px] min-h-[300px] leading-relaxed whitespace-pre-line">
-                {/* {board.contents} */}
+                {board.contents}
               { console.log("bord,content",board.contents)} 
-                <ReadonlyEditor content={board.contents} />
+                {/* <ReadonlyEditor content={board.contents} /> */}
                 {board.imageUrl && (
                   <img
                     src={board.imageUrl}
