@@ -18,6 +18,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "./Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
+import ReadonlyEditor from "./Components/Editor/ReadonlyEditor";
 
 function CategoriesDetail() {
   let navigate = useNavigate();
@@ -562,7 +563,9 @@ function CategoriesDetail() {
               />
             ) : (
               <div className="justify-start text-left py-6 text-[14px] min-h-[300px] leading-relaxed whitespace-pre-line">
-                {board.contents}
+                {/* {board.contents} */}
+              { console.log("bord,content",board.contents)} 
+                <ReadonlyEditor content={board.contents} />
                 {board.imageUrl && (
                   <img
                     src={board.imageUrl}
