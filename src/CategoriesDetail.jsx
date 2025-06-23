@@ -11,7 +11,6 @@ import {
   query,
   deleteDoc,
   where,
-  increment,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -19,7 +18,6 @@ import Header from "./Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
 import ReadonlyEditor from "./Components/Editor/ReadonlyEditor";
-
 function CategoriesDetail() {
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,7 +30,6 @@ function CategoriesDetail() {
   const [tempTitle, setTempTitle] = useState("");
   const { categoryId, boardId } = useParams();
   const { user } = useSelector(userSelector.selectUser);
-  const [heart, setHeart] = useState([]);
 
   async function getMe() {
     const auth = getAuth();
@@ -112,9 +109,9 @@ function CategoriesDetail() {
     setTempComment(e.target.value);
   }
 
-  function changeDetail(e) {
-    setTempDetail(e.target.value);
-  }
+  // function changeDetail(e) {
+  //   setTempDetail(e.target.value);
+  // }
 
   function changeTitle(e) {
     setTempTitle(e.target.value);
@@ -555,17 +552,16 @@ function CategoriesDetail() {
           {/* 내용 */}
           <div className="flex flex-col min-h-80">
             {detailIsEdit ? (
-              <textarea
-                className="border-1 rounded-md min-h-[300px] leading-relaxed border-none resize-none focus:outline-none align-top"
-                type="text"
-                value={tempDetail}
-                onChange={changeDetail}
-              />
+              <div className="board-contents min-h-100 py-6 text-[14px] leading-relaxed whitespace-pre-line">
+                <Editor
+                  content={tempDetail}
+                  onChangeEditContent={setTempDetail}
+                />
+              </div>
             ) : (
               <div className="justify-start text-left py-6 text-[14px] min-h-[300px] leading-relaxed whitespace-pre-line">
-                {board.contents}
-              { console.log("bord,content",board.contents)} 
-                {/* <ReadonlyEditor content={board.contents} /> */}
+                {board.contents && <ReadonlyEditor content={board.contents} />}
+
                 {board.imageUrl && (
                   <img
                     src={board.imageUrl}
@@ -602,7 +598,6 @@ function CategoriesDetail() {
               <button
                 className="text-[15px] cursor-pointer hover:font-medium ml-2"
                 onClick={() => navigate(`/categories`)}
-                // 여기서 리렌더링 되게 ? 어떻게 하는지??
               >
                 목록으로 가기
               </button>

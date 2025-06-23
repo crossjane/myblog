@@ -143,7 +143,7 @@ function CategoryWrite() {
                 <div className="board-title-line"></div>
               </div>
 
-              <div className="board-contents min-h-100">
+              <div className="board-contents min-h-100 py-6 text-[14px] leading-relaxed whitespace-pre-line">
                 <Editor onChangeContent={setContents} />
               </div>
               <div className="flex flex-col justify-center">
