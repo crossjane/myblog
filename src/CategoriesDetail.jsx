@@ -18,6 +18,8 @@ import Header from "./Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
 import ReadonlyEditor from "./Components/Editor/ReadonlyEditor";
+import { Editor } from "./Components/Editor";
+
 function CategoriesDetail() {
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -109,9 +111,9 @@ function CategoriesDetail() {
     setTempComment(e.target.value);
   }
 
-  // function changeDetail(e) {
-  //   setTempDetail(e.target.value);
-  // }
+  function changeDetail(e) {
+    setTempDetail(e.target.value);
+  }
 
   function changeTitle(e) {
     setTempTitle(e.target.value);

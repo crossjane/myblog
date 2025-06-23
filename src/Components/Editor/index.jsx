@@ -228,11 +228,15 @@ export const Editor = ({ content, onChangeContent, onChangeEditContent }) => {
     content,
     onUpdate: () => {
       const text = editor.getHTML();
-      // const textWithoutHtml = editor.getText();
+      const textWithoutHtml = editor.getText();
+
+      // text용 내용.
       onChangeContent(text);
       if (onChangeEditContent) {
         onChangeEditContent(text);
       }
+
+      // html 내용
     },
   });
 
