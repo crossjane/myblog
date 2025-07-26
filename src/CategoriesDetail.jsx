@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userAction, userSelector } from "./features/user/slice";
 import ReadonlyEditor from "./Components/Editor/ReadonlyEditor";
 import { Editor } from "./Components/Editor";
+import { boardAction } from "./features/board/slice";
 
 function CategoriesDetail() {
   let navigate = useNavigate();
@@ -28,13 +29,17 @@ function CategoriesDetail() {
   const [tempComment, setTempComment] = useState("");
   const [comments, setComments] = useState([]);
   const [detailIsEdit, setDetailIsEdit] = useState(false);
-  const [tempDetail, setTempDetail] = useState("");
+  const [tempDetailText, setTempDetailText] = useState("");
+  const [tempDetailHtml, setTempDetailHtml] = useState("");
   const [tempTitle, setTempTitle] = useState("");
   const { categoryId, boardId } = useParams();
   const { user } = useSelector(userSelector.selectUser);
 
   async function getMe() {
     const auth = getAuth();
+    // 현재 로그인한 사용자 가져오기기
+    // 근데 redux에 저장하면 - > 어디서 씀 ? 그냥 카테고리 에서 저장한번하면 여기서는 리덕스에서 가져오기만하면되는것아닌가
+    // 페이지안에서 로그인할 수도 있기때문인가?
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
@@ -62,19 +67,17 @@ function CategoriesDetail() {
         createdAt: data.createdAt?.toDate() ?? null,
       };
 
-      console.log("doformatBoard", formatBoard);
-
+      // formatBoard에 업로드한 format uid를 가져와서 해당 게시글의 작성자 정보를 게시글에 붙이기기
+      // 게시물정보 (board)에는 uid와 title. content  create정보만 있기 때문에 이름등을 가져오기 위해.
+      // uid 는 자동생성되는데 이것은 firebase의 기능이고 실제 데이터에서는 id를 써야 하는 것이 맞는지지
       const userRef = doc(db, "users", formatBoard.uid);
       const userSnap = await getDoc(userRef);
-
-      console.log("userSnap", userSnap);
 
       if (userSnap.exists()) {
         formatBoard.user = { ...userSnap.data() };
       }
 
       if (user) {
-        console.log("user!!!:", user);
         formatBoard.likeId = "";
 
         const q = query(
@@ -112,7 +115,7 @@ function CategoriesDetail() {
   }
 
   function changeDetail(e) {
-    setTempDetail(e.target.value);
+    setTempDetailHtml(e.target.value);
   }
 
   function changeTitle(e) {
@@ -120,9 +123,11 @@ function CategoriesDetail() {
   }
 
   function detailEdit() {
+    console.log("보드!!!", board);
     setDetailIsEdit(true);
-    setTempDetail(board.contents);
+    setTempDetailHtml(board.contents);
     setTempTitle(board.title);
+    setTempDetailText(board.withoutHtml);
   }
 
   async function detailDelete() {
@@ -224,14 +229,6 @@ function CategoriesDetail() {
   }
 
   async function commentLike(commentId) {
-    //구조 , 배열 객체 구조 같은것 머릿속에 정리
-    // comments: [{
-    //   id,
-    //   ...data,
-    //   isEdit: false,
-    //   tempComment: "",
-    //   likeId: "",
-    // }]
     try {
       const commentIndex = comments.findIndex(
         (comment) => commentId === comment.id
@@ -284,33 +281,53 @@ function CategoriesDetail() {
     }
   }
 
+  console.log("크리에이티드at", board.createdAt);
   async function detailEditSave() {
     try {
       const docRef = doc(db, "category", categoryId, "board", boardId);
 
-      if (tempDetail.trim().length === 0) {
+      if (tempDetailHtml.trim().length === 0) {
         alert("게시물 내용을 작성해주세요.");
         return;
       }
 
       await updateDoc(docRef, {
-        contents: tempDetail,
+        contents: tempDetailHtml,
+        withoutHtml: tempDetailText,
         title: tempTitle,
       });
 
       setBoard((prev) => ({
         ...prev,
         title: tempTitle,
-        contents: tempDetail,
+        contents: tempDetailHtml,
+        withoutHtml: tempDetailText,
       }));
 
       setDetailIsEdit(false);
+
+      console.log("🔥 dispatch payload", {
+        id: boardId,
+        contents: tempDetailHtml,
+        withoutHtml: tempDetailText,
+        title: tempTitle,
+      });
+
+      dispatch(
+        boardAction.updateBoard({
+          id: boardId,
+          contents: tempDetailHtml,
+          withoutHtml: tempDetailText,
+          title: tempTitle,
+        })
+      );
     } catch (error) {
-      console.log("error", error);
+      console.log("🔥 updateDoc error:", error.message, error.code, error);
       alert("글을 수정할 수 없습니다.");
     }
 
-    setTempDetail("");
+    setTempDetailText("");
+    setTempDetailHtml("");
   }
 
   async function loadComment() {
@@ -556,8 +573,9 @@ function CategoriesDetail() {
             {detailIsEdit ? (
               <div className="board-contents min-h-100 py-6 text-[14px] leading-relaxed whitespace-pre-line">
                 <Editor
-                  content={tempDetail}
-                  onChangeEditContent={setTempDetail}
+                  content={tempDetailHtml}
+                  onChangeContentWithoutHtml={setTempDetailText}
+                  onChangeContent={setTempDetailHtml}
                 />
               </div>
             ) : (
@@ -587,13 +605,13 @@ function CategoriesDetail() {
                     className="hover:font-medium cursor-pointer"
                     onClick={detailEdit}
                   >
-                    <img src="/public/edit.svg" className="h-6" />
+                    <img src="/edit.svg" className="h-6" />
                   </button>
                   <button
                     className="hover:font-medium cursor-pointer"
                     onClick={detailDelete}
                   >
-                    <img src="/public/delete.svg" className="h-5" />
+                    <img src="/delete.svg" className="h-5" />
                   </button>
                 </>
               ) : null}

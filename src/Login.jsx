@@ -23,11 +23,13 @@ function Login() {
   async function login() {
     try {
       const auth = getAuth();
+      // .then 대신 await으로 임의로 바꾼것인지? 여기서의 차이점? 크게 있는지.
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         passwords
       );
+      // 지워도 될것같은데 공식문서에는 왜있을까.
       const user = userCredential.user;
       console.log(user);
       navigate("/categories?tab=OfLdJf7dkBswF0756yBw");

@@ -65,8 +65,11 @@ function Categories() {
         newCategories.push(formatCategory);
       });
       if (newCategories.length > 0) {
+        // 카테고리가 1개 이상이면, 왜 0번째 id를 넣는지 ?
+        //
         setTab(newCategories[0].id);
       }
+      //
       dispatch(categoryAction.updateCategories(newCategories));
     } catch (error) {
       console.error("error", error);
@@ -93,12 +96,16 @@ function Categories() {
           const formatBoard = {
             id,
             ...data,
+            withdoutHtml: data.withoutHtml ?? "",
             createdAt: data.createdAt?.toDate()?.toISOString() ?? null,
           };
+
+          console.log("data 안에 뭐 있나 확인:", data);
 
           newBoards.push(formatBoard);
         });
 
+        //좋아요 . 갯수? 헷갈림.  uid? 왜 uid로 했는지 id로 해도되는것. ?
         for (const newBoard of newBoards) {
           const likeResult = await getDocs(
             collection(db, "category", tab, "board", newBoard.id, "like")
@@ -160,6 +167,12 @@ function Categories() {
 
   function getMe() {
     const auth = getAuth();
+    // 현재 로그인한 사용자 가져오기기
+    // 로그인한 사용자 , / , 정보를 state로 했는가 ?
+    // getMe 가 일반적인 네이밍? 왜 페이지마다 getMe를 해야되지 ? 리덕스로 관리하면 그냥 dispatch만 하면 되는 것아닌가?
+    // 1.링크로 접속할수가 있어서 페이지마다 2. 중간에 로그인 로그아웃하면  의 경우의 수가 있기 때문에 페이지마다 넣어줌
+    //  (덜중요: 개선점점)반복적인 코드 -> 헤더에 넣을 수 있음 (페이지로딩될때마다 계속 로딩딩)
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
@@ -282,7 +295,7 @@ function Categories() {
               onClick={() => gotoDetail(board.id)}
             >
               <div className="flex mt-3 flex-row items-center mb-4">
-                <h2 className="flex mr-3 font-medium text-[22px] text-gray-600 ">
+                <h2 className="flex mr-3 font-medium text-[22px] text-gray-600 text-left">
                   {board.title}
                 </h2>
                 <span className="flex text-sm text-gray-500">
@@ -295,7 +308,7 @@ function Categories() {
               <div className="flex flex-row flex-wrap">
                 <div className="flex flex-1">
                   <p className="text-gray-700 text-[15px] line-clamp-3 leading-5 w-[95%] text-left">
-                    {board.contents} <br />
+                    {board.withoutHtml} <br />
                   </p>
                 </div>
                 <div className="flex items-center">

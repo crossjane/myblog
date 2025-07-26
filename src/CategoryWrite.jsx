@@ -15,6 +15,9 @@ function CategoryWrite() {
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
 
+  const [contentsHtml, setContentsHtml] = useState("");
+  const [contentsText, setContentsText] = useState("");
+
   const dispatch = useDispatch();
   let navigate = useNavigate();
 
@@ -62,7 +65,8 @@ function CategoryWrite() {
         collection(db, "category", categoryId, "board"),
         {
           title,
-          contents,
+          contents: contentsHtml,
+          withoutHtml: contentsText,
           uid,
           imageUrl,
           createdAt: Timestamp.fromDate(createdAt),
@@ -144,7 +148,10 @@ function CategoryWrite() {
               </div>
 
               <div className="board-contents min-h-100 py-6 text-[14px] leading-relaxed whitespace-pre-line">
-                <Editor onChangeContent={setContents} />
+                <Editor
+                  onChangeContent={setContentsHtml}
+                  onChangeContentWithoutHtml={setContentsText}
+                />
               </div>
               <div className="flex flex-col justify-center">
                 <div>첨부파일 등록</div>

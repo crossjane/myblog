@@ -29,9 +29,18 @@ function Join() {
         email,
         passwords
       );
+      // user로 꺼내서쓰기. 객체.
+      //       {
+      //   uid: "a1b2c3d4...",
+      //   email: "example@email.com",
+      //   displayName: null,
+      //   emailVerified: false,
+      //   ...기타 정보들
+      // }
       const user = userCredential.user;
 
       const userRef = collection(db, "users");
+      //  user.uid를 가리키는 경로 참조 객체. 생성되었기 떄문에 참조가 가능한건가 ?
       const ref = doc(userRef, user.uid);
       setDoc(ref, {
         name,

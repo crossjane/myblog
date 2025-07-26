@@ -196,7 +196,11 @@ export const MenuBar = ({ editor }) => {
   );
 };
 
-export const Editor = ({ content, onChangeContent, onChangeEditContent }) => {
+export const Editor = ({
+  content,
+  onChangeContent,
+  onChangeContentWithoutHtml,
+}) => {
   const editor = useEditor({
     editorProps: {
       attributes: {
@@ -227,16 +231,20 @@ export const Editor = ({ content, onChangeContent, onChangeEditContent }) => {
     ],
     content,
     onUpdate: () => {
+      // html 용
       const text = editor.getHTML();
+      // text용용
       const textWithoutHtml = editor.getText();
 
       // text용 내용.
-      onChangeContent(text);
-      if (onChangeEditContent) {
-        onChangeEditContent(text);
+      if (onChangeContentWithoutHtml) {
+        onChangeContentWithoutHtml(textWithoutHtml);
       }
 
       // html 내용
+      if (onChangeContent) {
+        onChangeContent(text);
+      }
     },
   });
 
